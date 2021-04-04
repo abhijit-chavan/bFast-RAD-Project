@@ -1,0 +1,32 @@
+@page
+@model CourseEnquiry.Pages.Admin_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Admin.AdminId"></label>:</td>
+                    <td class="editor-label">@Model.Admin.AdminId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Admin.AdminName"></label>:</td>
+                    <td class="editor-label">@Model.Admin.AdminName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Admin.AdminPassword"></label>:</td>
+                    <td class="editor-label">@Model.Admin.AdminPassword</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

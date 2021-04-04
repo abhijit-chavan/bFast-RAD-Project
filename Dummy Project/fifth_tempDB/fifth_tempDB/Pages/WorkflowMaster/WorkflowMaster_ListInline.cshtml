@@ -1,0 +1,146 @@
+@page
+@model fifth_tempDB.Pages.WorkflowMaster_ListInlineModel
+@using System.Text.RegularExpressions;
+@{
+    ViewData["Title"] = "List of Workflow Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listinline.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/WorkflowMaster/WorkflowMaster_ListInline';
+        var errorMessage = '';
+
+        function getSerializedData(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+            var workflowId = rowData.WorkflowId;
+
+            if (workflowId == '')
+                workflowId = '-1';
+
+            var serializedData =
+                "'WorkflowId':'" + workflowId + "'," +
+                "'WorkflowName':'" + $('#' + currentId + '_WorkflowName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'LevelOfApprovals':'" + $('#' + currentId + '_LevelOfApprovals').val() + "'," +
+                "'CreatedBy':'" + $('#' + currentId + '_CreatedBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CreatedOn':'" + $('#' + currentId + '_CreatedOn').val() + "'," +
+                "'Updatedby':'" + $('#' + currentId + '_Updatedby').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Updatedon':'" + $('#' + currentId + '_Updatedon').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+        
+            var workflowName = $('#' + currentId + '_WorkflowName').val();
+            var levelOfApprovals = $('#' + currentId + '_LevelOfApprovals').val();
+            var createdBy = $('#' + currentId + '_CreatedBy').val();
+            var createdOn = $('#' + currentId + '_CreatedOn').val();
+            var updatedby = $('#' + currentId + '_Updatedby').val();
+            var updatedon = $('#' + currentId + '_Updatedon').val();
+
+            // validation
+            if (workflowName == '') errorMessage += '- Workflow Name is required.<br/>';
+            if (workflowName.length > 50) errorMessage += '- Workflow Name must be 50 characters or less.<br/>';
+            if (levelOfApprovals != '' && !isNumeric(levelOfApprovals)) errorMessage += '- Level Of Approvals must be an integer.<br/>';
+            if (createdBy.length > 50) errorMessage += '- Created By must be 50 characters or less.<br/>';
+            if (createdOn == '') errorMessage += '- Created On is required.<br/>';
+            if (createdOn != '' && !isDate(createdOn)) errorMessage += '- Created On must be a valid date.<br/>';
+            if (updatedby.length > 50) errorMessage += '- Updatedby must be 50 characters or less.<br/>';
+            if (updatedon == '') errorMessage += '- Updatedon is required.<br/>';
+            if (updatedon != '' && !isDate(updatedon)) errorMessage += '- Updatedon must be a valid date.<br/>';
+
+            if (errorMessage == '')
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowMaster/WorkflowMaster_ListInline?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Workflow Id','Workflow Name','Level Of Approvals','Created By','Created On','Updatedby','Updatedon', '', ''],
+                colModel: [
+                    { name: 'WorkflowId', index: 'WorkflowId', align: 'right' },
+                    { name: 'WorkflowName', index: 'WorkflowName', align: 'left', editable: true },
+                    { name: 'LevelOfApprovals', index: 'LevelOfApprovals', align: 'right', editable: true, formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', editable: true },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'Updatedby', index: 'Updatedby', align: 'left', editable: true },
+                    { name: 'Updatedon', index: 'Updatedon', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'WorkflowId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a id='editLink" + currentid + "' href='#' onclick=\"editRow('" + currentid + "', 'ListInlineUpdate');\"><img src='/images/Edit.gif' style='border:none;' /></a>" +
+                                "<a id='saveLink" + currentid + "' style='display:none;' href='#' onclick=\"saveRow('" + currentid + "');\"><img src='/images/Checked.gif' style='border:none;' /></a>";
+
+                        deleteLink = "<a href='#' id='deleteLink" + currentid + "' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>" +
+                            "<a id='cancelLink" + currentid + "' style='display:none;' href='#' onclick=\"cancelRow('" + currentid + "');\"><img src='/images/Unchecked.gif' style='border:none;' /></a>";
+
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { auditoperation: auditLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" id="addLink1" onclick="addRow('ListInlineAdd')"><img src="@Url.Content("~/images/Add.gif")" alt="Add New WorkflowMaster" style="border: none;" /></a>&nbsp;<a href="#" id="addLink2" onclick="addRow('ListInlineAdd')">Add New WorkflowMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

@@ -1,0 +1,90 @@
+@page
+@model CourseEnquiry1.Pages.Student_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of Student";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/Student/Student_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/Student/Student_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Studen Id','Student Name','Email Id','Contact Number','Password', '', ''],
+                colModel: [
+                    { name: 'StudenId', index: 'StudenId', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'left' },
+                    { name: 'EmailId', index: 'EmailId', align: 'left' },
+                    { name: 'ContactNumber', index: 'ContactNumber', align: 'right', formatter: 'integer' },
+                    { name: 'Password', index: 'Password', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StudenId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Student',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/Student/Student_Update?id=" + currentid + "&returnUrl=/Student/Student_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/Student/Student_Add?returnUrl=/Student/Student_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Student" style="border: none;" /></a>&nbsp;<a href="/Student/Student_Add?returnUrl=/Student/Student_ListCrudRedirect">Add New Student</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

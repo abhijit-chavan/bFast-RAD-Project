@@ -1,0 +1,140 @@
+@page
+@model CourseEnquiry.Pages.UserRoles_ListInlineModel
+@using System.Text.RegularExpressions;
+@{
+    ViewData["Title"] = "List of User Roles";
+
+    string userIdSelectValues = ":";
+    string roleIdSelectValues = ":";
+
+    foreach (var item in Model.UserMasterDropDownListData.OrderBy(u => u.UserId))
+    {
+        userIdSelectValues += ";" + item.UserId + ":" + item.UserId + " - " + Regex.Replace(item.CreatedBy is null ? "" : item.CreatedBy, "[^a-zA-Z0-9 -]", "");
+    }
+
+    foreach (var item in Model.RoleMasterDropDownListData.OrderBy(r => r.RoleId))
+    {
+        roleIdSelectValues += ";" + item.RoleId + ":" + item.RoleId + " - " + Regex.Replace(item.CreatedBy is null ? "" : item.CreatedBy, "[^a-zA-Z0-9 -]", "");
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listinline.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/UserRoles/UserRoles_ListInline';
+        var errorMessage = '';
+
+        function getSerializedData(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+            var userRoleId = rowData.UserRoleId;
+
+            if (userRoleId == '')
+                userRoleId = '-1';
+
+            var serializedData =
+                "'UserRoleId':'" + userRoleId + "'," +
+                "'UserId':'" + $('#' + currentId + '_UserId').val() + "'," +
+                "'RoleId':'" + $('#' + currentId + '_RoleId').val() + "'," +
+                "'Status':'" + $('#' + currentId + '_Status').is(':checked') + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+        
+
+            // validation
+
+            if (errorMessage == '')
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            var userIdSelectValues = "@userIdSelectValues";
+            var roleIdSelectValues = "@roleIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListInline?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status', '', ''],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'left', editable: true, formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: userIdSelectValues } },
+                    { name: 'RoleId', index: 'RoleId', align: 'left', editable: true, formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: roleIdSelectValues } },
+                    { name: 'Status', index: 'Status', align: 'center', editable: true, stype: 'select', edittype: 'checkbox', editoptions: { value: 'True:False' } },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a id='editLink" + currentid + "' href='#' onclick=\"editRow('" + currentid + "', 'ListInlineUpdate');\"><img src='/images/Edit.gif' style='border:none;' /></a>" +
+                                "<a id='saveLink" + currentid + "' style='display:none;' href='#' onclick=\"saveRow('" + currentid + "');\"><img src='/images/Checked.gif' style='border:none;' /></a>";
+
+                        deleteLink = "<a href='#' id='deleteLink" + currentid + "' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>" +
+                            "<a id='cancelLink" + currentid + "' style='display:none;' href='#' onclick=\"cancelRow('" + currentid + "');\"><img src='/images/Unchecked.gif' style='border:none;' /></a>";
+
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { auditoperation: auditLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" id="addLink1" onclick="addRow('ListInlineAdd')"><img src="@Url.Content("~/images/Add.gif")" alt="Add New UserRoles" style="border: none;" /></a>&nbsp;<a href="#" id="addLink2" onclick="addRow('ListInlineAdd')">Add New UserRoles</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

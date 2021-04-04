@@ -1,0 +1,227 @@
+@page
+@model StudentEnquiry.Pages.Enquiry_ListCrudModel
+@{
+    ViewData["Title"] = "List of Enquiry";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "Enquiry";
+        var urlAndMethod = "/Enquiry/Enquiry_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+        }
+
+        function editItem(enquiryId, courseId, studentName, contactNo, comments) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(enquiryId);
+
+            $("#enquiryId").attr('disabled', false);
+            $("#enquiryId").val(enquiryId);
+            $("#courseId").val(courseId);
+            $("#studentName").val(studentName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#contactNo").val(contactNo);
+            $("#comments").val(comments.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#enquiryId").val('');
+            $("#courseId").val('');
+            $("#studentName").val('');
+            $("#contactNo").val('');
+            $("#comments").val('');
+        }
+
+        function getSerializedData() {
+            var enquiryId = $('#enquiryId').val();
+
+            if (enquiryId == '')
+                enquiryId = '-1';
+
+            var serializedData =
+                "'EnquiryId':'" + enquiryId + "'," +
+                "'CourseId':'" + $('#courseId').val() + "'," +
+                "'StudentName':'" + $('#studentName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'ContactNo':'" + $('#contactNo').val() + "'," +
+                "'Comments':'" + $('#comments').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var courseId = $('#courseId').val();
+            var studentName = $('#studentName').val();
+            var contactNo = $('#contactNo').val();
+            var comments = $('#comments').val();
+
+            // clear all validation messages
+            $('#courseIdValidation').text('');
+            $('#studentNameValidation').text('');
+            $('#contactNoValidation').text('');
+            $('#commentsValidation').text('');
+
+            // validation
+            if (courseId == '') { isValid = false; $("#courseIdValidation").text('Course Id is required.'); }
+            if (studentName == '') { isValid = false; $("#studentNameValidation").text('Student Name is required.'); }
+            if (studentName.length > 50) { isValid = false; $("#studentNameValidation").text('Student Name must be 50 characters or less.'); }
+            if (contactNo == '') { isValid = false; $("#contactNoValidation").text('Contact No is required.'); }
+            if (contactNo != '' && !isNumeric(contactNo)) { isValid = false; $("#contactNoValidation").text('Contact No must be an integer.'); }
+            if (contactNo != '' && isNumeric(contactNo) && !isWithinInt64Range(contactNo)) { isValid = false; $("#contactNoValidation").text('Contact No must be between -9223372036854775808 and 9223372036854775807.'); }
+            if (comments.length > 50) { isValid = false; $("#commentsValidation").text('Comments must be 50 characters or less.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/Enquiry/Enquiry_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enquiry Id','Course Id','Student Name','Contact No','Comments', '', ''],
+                colModel: [
+                    { name: 'EnquiryId', index: 'EnquiryId', align: 'right' },
+                    { name: 'CourseId', index: 'CourseId', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'left' },
+                    { name: 'ContactNo', index: 'ContactNo', align: 'right', formatter: 'integer' },
+                    { name: 'Comments', index: 'Comments', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnquiryId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Enquiry',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var enquiryId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'EnquiryId');
+                        var courseId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseId');
+                        var studentName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StudentName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var contactNo = jQuery("#list-grid").jqGrid('getCell', ids[i], 'ContactNo');
+                        var comments = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Comments').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + enquiryId + "','" + courseId + "','" + studentName + "','" + contactNo + "','" + comments + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New Enquiry">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.EnquiryId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="enquiryId" asp-for="Enquiry.EnquiryId" asp-items="@(new SelectList(Model.EnquiryDropDownListData, "EnquiryId", "StudentName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.CourseId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="courseId" asp-for="Enquiry.CourseId" asp-items="@(new SelectList(Model.CouseDropDownListData, "Couseid", "CouseName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="courseIdValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.StudentName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Enquiry.StudentName" id="studentName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="studentNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.ContactNo"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Enquiry.ContactNo" id="contactNo" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="contactNoValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.Comments"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="Enquiry.Comments" id="comments" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="commentsValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Enquiry" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New Enquiry</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

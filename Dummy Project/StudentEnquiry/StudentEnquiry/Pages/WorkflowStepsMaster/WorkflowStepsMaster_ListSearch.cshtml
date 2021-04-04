@@ -1,0 +1,113 @@
+@page
+@model StudentEnquiry.Pages.WorkflowStepsMaster_ListSearchModel
+@{
+    ViewData["Title"] = "List of Workflow Steps Master";
+
+    string worKflowIdSelectValues = ":";
+
+    foreach (var item in Model.WorkflowMasterDropDownListData.OrderBy(w => w.WorkflowId))
+    {
+        worKflowIdSelectValues += ";" + item.WorkflowId + ":" + item.WorkflowId;
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+            var worKflowIdSelectValues = "@worKflowIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowStepsMaster/WorkflowStepsMaster_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Step Id','Wor Kflow Id','Approval Level','Description','Auto Approve','Wait Time','Created By','Created On','Updated By','Updated On'],
+                colModel: [
+                    { name: 'StepId', index: 'StepId', align: 'right' },
+                    { name: 'WorKflowId', index: 'WorKflowId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: worKflowIdSelectValues } },
+                    { name: 'ApprovalLevel', index: 'ApprovalLevel', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'Description', index: 'Description', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'AutoApprove', index: 'AutoApprove', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'WaitTime', index: 'WaitTime', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'UpdatedBy', index: 'UpdatedBy', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'UpdatedOn', index: 'UpdatedOn', align: 'left', sorttype: "date" }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StepId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Steps Master',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "StepId" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Step Id must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "WaitTime" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Wait Time must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "CreatedOn" && !isDate(enteredValue)) {
+                        validationErrors += "  Created On must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "UpdatedOn" && !isDate(enteredValue)) {
+                        validationErrors += "  Updated On must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

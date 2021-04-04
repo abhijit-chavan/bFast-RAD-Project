@@ -1,0 +1,93 @@
+@page
+@model CourseEnquiry1.Pages.UserMaster_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of User Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/UserMaster/UserMaster_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/UserMaster/UserMaster_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Id','User Name','Password','Email','Created On','Created By','Modified On','Modified By', '', ''],
+                colModel: [
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'UserName', index: 'UserName', align: 'left' },
+                    { name: 'Password', index: 'Password', align: 'left' },
+                    { name: 'Email', index: 'Email', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'ModifiedOn', index: 'ModifiedOn', align: 'left', sorttype: "date" },
+                    { name: 'ModifiedBy', index: 'ModifiedBy', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/UserMaster/UserMaster_Update?id=" + currentid + "&returnUrl=/UserMaster/UserMaster_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/UserMaster/UserMaster_Add?returnUrl=/UserMaster/UserMaster_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New UserMaster" style="border: none;" /></a>&nbsp;<a href="/UserMaster/UserMaster_Add?returnUrl=/UserMaster/UserMaster_ListCrudRedirect">Add New UserMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

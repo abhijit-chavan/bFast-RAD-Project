@@ -1,0 +1,93 @@
+@page
+@model CourseEnquiry1.Pages.CourseEnrollment_ListForeachModel
+@{
+    ViewData["Title"] = "List of Course Enrollment";
+    string bgColor = "#F7F6F3";
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-listforeach.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/CourseEnrollment/CourseEnrollment_ListForeach';
+    </script>
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/CourseEnrollment/CourseEnrollment_Add?returnUrl=/CourseEnrollment/CourseEnrollment_ListForeach"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Course Enrollment" style="border: none;" /></a>&nbsp;<a href="/CourseEnrollment/CourseEnrollment_Add?returnUrl=/CourseEnrollment/CourseEnrollment_ListForeach">Add New Course Enrollment</a>
+<br /><br />
+
+<table class="gridviewGridLines" cellspacing ="0" cellpadding="8" style="width:100%;border-collapse:collapse;">
+    <tr style="color:#2E6E9E;background-color:#DFEFFC;font-weight:bold;">
+        @for (int i = 0; i < Model.CourseEnrollmentFieldNames.GetLength(0); i++)
+        {
+            string fieldName = Model.CourseEnrollmentFieldNames[i, 0];
+            string title = Model.CourseEnrollmentFieldNames[i, 1];
+
+            if (Model.FieldToSortWithOrder.Contains(fieldName) && Model.FieldToSortWithOrder.Contains("asc"))
+            {
+                <td><a href="?sidx=@fieldName&sord=desc&handler=GridData" style="color:#2E6E9E;">@title</a>@if (Model.FieldToSortWithOrder == fieldName + " asc") {<img src="@Url.Content("~/images/ArrowUp.png")" alt="" />}</td>
+            }
+            else
+            {
+                <td><a href="?sidx=@fieldName&sord=asc&handler=GridData" style="color:#2E6E9E;">@title</a>@if (Model.FieldToSortWithOrder == fieldName + " desc") {<img src="@Url.Content("~/images/ArrowDown.png")" alt="" />}</td>
+            }
+        }
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+
+    @foreach (var item in Model.CourseEnrollmentData)
+    {
+        <tr style="color:#333333; background-color:@bgColor;">
+            <td align="right">@item.EnrollmentId</td>
+            <td align="right"><a href="~/Course/Course_Details?id=@item.CourseName&returnUrl=/CourseEnrollment/CourseEnrollment_ListForeach">@item.CourseName</a></td>
+            <td align="right"><a href="~/Student/Student_Details?id=@item.StudentName&returnUrl=/CourseEnrollment/CourseEnrollment_ListForeach">@item.StudentName</a></td>
+            <td>@item.Comments</td>
+            <td align="center" style="width:30px;">
+                <a href="/CourseEnrollment/CourseEnrollment_Update?id=@item.EnrollmentId&returnUrl=/CourseEnrollment/CourseEnrollment_ListForeach" title="Click to edit"><img src="@Url.Content("~/images/Edit.gif")" alt="" style="border:none;" /></a>
+            </td>
+            <td align="center" style="width:30px;">
+                <input type="image" id="imgDelete1" title="Click to delete" src="@Url.Content("~/images/Delete.png")" onclick="deleteItem('@item.EnrollmentId');" style="border-style:none;" />
+            </td>
+        </tr>
+
+        bgColor = bgColor == "#F7F6F3" ? "White" : "#F7F6F3";
+    }
+
+    <tr class="gridviewPagerStyle" align="center" style="background-color:#DFEFFC;">
+        <td colspan="6">
+            <table>
+                <tr>
+                    @if (Model.CurrentPage > Model.NumberOfPagesToShow)
+                    {
+                        <td><a href="?sidx=@Model.FieldToSort&sord=@Model.FieldSortOrder&_page=1&handler=GridData" style="color:#000000;">< First</a></td>
+                        <td><a href="?sidx=@Model.FieldToSort&sord=@Model.FieldSortOrder&_page=@(Model.StartPage - 1)&handler=GridData" style="color:#000000;">...</a></td>
+                    }
+
+                    @for (int pageNumber = Model.StartPage; pageNumber <= Model.EndPage; pageNumber++)
+                    {
+                        if (pageNumber == Model.CurrentPage)
+                        {
+                            <td><span style="font-size:12px;">@pageNumber</span></td>
+                        }
+                        else
+                        {
+                            <td><a href="?sidx=@Model.FieldToSort&sord=@Model.FieldSortOrder&_page=@pageNumber&handler=GridData" style="color:#000000;">@pageNumber</a></td>
+                        }
+                    }
+
+                    @if (Model.EndPage < Model.TotalPages)
+                    {
+                        <td><a href="?sidx=@Model.FieldToSort&sord=@Model.FieldSortOrder&_page=@(Model.EndPage + 1)&handler=GridData" style="color:#000000;">...</a></td>
+                        <td><a href="?sidx=@Model.FieldToSort&sord=@Model.FieldSortOrder&_page=@Model.TotalPages&handler=GridData" style="color:#000000;">Last ></a></td>
+                    }
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

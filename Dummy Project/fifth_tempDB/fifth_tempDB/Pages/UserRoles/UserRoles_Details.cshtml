@@ -1,0 +1,36 @@
+@page
+@model fifth_tempDB.Pages.UserRoles_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserRoles.UserRoleId"></label>:</td>
+                    <td class="editor-label">@Model.UserRoles.UserRoleId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserRoles.UserId"></label>:</td>
+                    <td class="editor-field"><label asp-for="UserRoles.UserId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserRoles.RoleId"></label>:</td>
+                    <td class="editor-field"><label asp-for="UserRoles.RoleId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserRoles.Status"></label>:</td>
+                    <td class="editor-label">@Model.UserRoles.Status</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

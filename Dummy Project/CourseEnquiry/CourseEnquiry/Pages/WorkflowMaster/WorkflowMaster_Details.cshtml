@@ -1,0 +1,48 @@
+@page
+@model CourseEnquiry.Pages.WorkflowMaster_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.WorkflowId"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.WorkflowId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.WorkflowName"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.WorkflowName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.LevelOfApprovals"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.LevelOfApprovals</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.CreatedBy"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.CreatedBy</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.CreatedOn"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.CreatedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.Updatedby"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.Updatedby</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowMaster.Updatedon"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowMaster.Updatedon</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

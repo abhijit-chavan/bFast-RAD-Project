@@ -1,0 +1,17 @@
+@page
+@model CourseEnquiry1.Pages.Course_AddModel
+@section AdditionalJavaScript {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script type="text/javascript">
+        $(function () {
+            $('.datetextbox').datepicker({dateFormat: 'm/d/yy'});
+        });
+    </script>
+}
+
+<h2>Add Record</h2>
+@Html.ValidationSummary(true)
+<div>
+    @Html.Partial("../Shared/_AddEditCoursePartial.cshtml", Model.PartialModel)
+</div>

@@ -1,0 +1,52 @@
+@page
+@model fifth_tempDB.Pages.UserMaster_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.UserId"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.UserId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.UserName"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.UserName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.Password"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.Password</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.Email"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.Email</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.CreatedOn"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.CreatedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.CreatedBy"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.CreatedBy</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.ModifiedOn"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.ModifiedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="UserMaster.ModifiedBy"></label>:</td>
+                    <td class="editor-label">@Model.UserMaster.ModifiedBy</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

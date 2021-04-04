@@ -1,0 +1,60 @@
+@page
+@model CourseEnquiry.Pages.Student_ListReadOnlyModel
+@{
+    ViewData["Title"] = "List of Student";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/Student/Student_ListReadOnly?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Student Id','Student Name','Email Id','Contact No','Student Password'],
+                colModel: [
+                    { name: 'StudentId', index: 'StudentId', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'left' },
+                    { name: 'EmailId', index: 'EmailId', align: 'left' },
+                    { name: 'ContactNo', index: 'ContactNo', align: 'right', formatter: 'integer' },
+                    { name: 'StudentPassword', index: 'StudentPassword', align: 'left' }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StudentId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Student',
+                height: '100%',
+                width: '1200'
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

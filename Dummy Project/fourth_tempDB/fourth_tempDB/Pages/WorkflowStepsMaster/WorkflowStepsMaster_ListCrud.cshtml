@@ -1,0 +1,295 @@
+@page
+@model fourth_tempDB.Pages.WorkflowStepsMaster_ListCrudModel
+@{
+    ViewData["Title"] = "List of Workflow Steps Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "WorkflowStepsMaster";
+        var urlAndMethod = "/WorkflowStepsMaster/WorkflowStepsMaster_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#stepId").attr('disabled', true);
+        }
+
+        function editItem(stepId, worKflowId, approvalLevel, description, autoApprove, waitTime, createdBy, createdOn, updatedBy, updatedOn) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(stepId);
+
+            $("#stepId").attr('disabled', false);
+            $("#stepId").val(stepId);
+            $("#worKflowId").val(worKflowId);
+            $("#approvalLevel").val(approvalLevel.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#description").val(description.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#autoApprove").val(autoApprove.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#waitTime").val(waitTime);
+            $("#createdBy").val(createdBy.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#createdOn").val(createdOn);
+            $("#updatedBy").val(updatedBy.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#updatedOn").val(updatedOn);
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#stepId").val('');
+            $("#worKflowId").val('');
+            $("#approvalLevel").val('');
+            $("#description").val('');
+            $("#autoApprove").val('');
+            $("#waitTime").val('');
+            $("#createdBy").val('');
+            $("#createdOn").val('');
+            $("#updatedBy").val('');
+            $("#updatedOn").val('');
+        }
+
+        function getSerializedData() {
+            var stepId = $('#stepId').val();
+
+            if (stepId == '')
+                stepId = '-1';
+
+            var serializedData =
+                "'StepId':'" + stepId + "'," +
+                "'WorKflowId':'" + $('#worKflowId').val() + "'," +
+                "'ApprovalLevel':'" + $('#approvalLevel').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Description':'" + $('#description').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'AutoApprove':'" + $('#autoApprove').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'WaitTime':'" + $('#waitTime').val() + "'," +
+                "'CreatedBy':'" + $('#createdBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CreatedOn':'" + $('#createdOn').val() + "'," +
+                "'UpdatedBy':'" + $('#updatedBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'UpdatedOn':'" + $('#updatedOn').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var approvalLevel = $('#approvalLevel').val();
+            var description = $('#description').val();
+            var autoApprove = $('#autoApprove').val();
+            var waitTime = $('#waitTime').val();
+            var createdBy = $('#createdBy').val();
+            var createdOn = $('#createdOn').val();
+            var updatedBy = $('#updatedBy').val();
+            var updatedOn = $('#updatedOn').val();
+
+            // clear all validation messages
+            $('#approvalLevelValidation').text('');
+            $('#descriptionValidation').text('');
+            $('#autoApproveValidation').text('');
+            $('#waitTimeValidation').text('');
+            $('#createdByValidation').text('');
+            $('#createdOnValidation').text('');
+            $('#updatedByValidation').text('');
+            $('#updatedOnValidation').text('');
+
+            // validation
+            if (approvalLevel.length > 50) { isValid = false; $("#approvalLevelValidation").text('Approval Level must be 50 characters or less.'); }
+            if (description.length > 50) { isValid = false; $("#descriptionValidation").text('Description must be 50 characters or less.'); }
+            if (autoApprove.length > 50) { isValid = false; $("#autoApproveValidation").text('Auto Approve must be 50 characters or less.'); }
+            if (waitTime != '' && !isNumeric(waitTime)) { isValid = false; $("#waitTimeValidation").text('Wait Time must be an integer.'); }
+            if (waitTime != '' && isNumeric(waitTime) && !isWithinInt32Range(waitTime)) { isValid = false; $("#waitTimeValidation").text('Wait Time must be between -2147483648 and 2147483647.'); }
+            if (createdBy.length > 50) { isValid = false; $("#createdByValidation").text('Created By must be 50 characters or less.'); }
+            if (createdOn == '') { isValid = false; $("#createdOnValidation").text('Created On is required.'); }
+            if (createdOn != '' && !isDate(createdOn)) { isValid = false; $("#createdOnValidation").text('Created On must be a valid date.'); }
+            if (updatedBy.length > 50) { isValid = false; $("#updatedByValidation").text('Updated By must be 50 characters or less.'); }
+            if (updatedOn == '') { isValid = false; $("#updatedOnValidation").text('Updated On is required.'); }
+            if (updatedOn != '' && !isDate(updatedOn)) { isValid = false; $("#updatedOnValidation").text('Updated On must be a valid date.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowStepsMaster/WorkflowStepsMaster_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Step Id','Wor Kflow Id','Approval Level','Description','Auto Approve','Wait Time','Created By','Created On','Updated By','Updated On', '', ''],
+                colModel: [
+                    { name: 'StepId', index: 'StepId', align: 'right' },
+                    { name: 'WorKflowId', index: 'WorKflowId', align: 'right' },
+                    { name: 'ApprovalLevel', index: 'ApprovalLevel', align: 'left' },
+                    { name: 'Description', index: 'Description', align: 'left' },
+                    { name: 'AutoApprove', index: 'AutoApprove', align: 'left' },
+                    { name: 'WaitTime', index: 'WaitTime', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'UpdatedBy', index: 'UpdatedBy', align: 'left' },
+                    { name: 'UpdatedOn', index: 'UpdatedOn', align: 'left', sorttype: "date" },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StepId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Steps Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var stepId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StepId');
+                        var worKflowId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'WorKflowId');
+                        var approvalLevel = jQuery("#list-grid").jqGrid('getCell', ids[i], 'ApprovalLevel').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var description = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Description').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var autoApprove = jQuery("#list-grid").jqGrid('getCell', ids[i], 'AutoApprove').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var waitTime = jQuery("#list-grid").jqGrid('getCell', ids[i], 'WaitTime');
+                        var createdBy = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedBy').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var createdOn = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedOn');
+                        var updatedBy = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UpdatedBy').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var updatedOn = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UpdatedOn');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + stepId + "','" + worKflowId + "','" + approvalLevel + "','" + description + "','" + autoApprove + "','" + waitTime + "','" + createdBy + "','" + createdOn + "','" + updatedBy + "','" + updatedOn + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New WorkflowStepsMaster">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.StepId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.StepId" id="stepId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.WorKflowId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="worKflowId" asp-for="WorkflowStepsMaster.WorKflowId" asp-items="@(new SelectList(Model.WorkflowMasterDropDownListData, "WorkflowId", "WorkflowName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.ApprovalLevel"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.ApprovalLevel" id="approvalLevel" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="approvalLevelValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.Description"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.Description" id="description" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="descriptionValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.AutoApprove"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.AutoApprove" id="autoApprove" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="autoApproveValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.WaitTimeHidden"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.WaitTimeHidden" id="waitTime" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="waitTimeValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.CreatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.CreatedBy" id="createdBy" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdByValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.CreatedOn" class="datetextbox" id="createdOn" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdOnValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.UpdatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.UpdatedBy" id="updatedBy" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="updatedByValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.UpdatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.UpdatedOn" class="datetextbox" id="updatedOn" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="updatedOnValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New WorkflowStepsMaster" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New WorkflowStepsMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

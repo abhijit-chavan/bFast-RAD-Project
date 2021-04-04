@@ -1,0 +1,93 @@
+@using CourseEnquiryAPI.Domain;
+@model CourseEnquiry.PartialModels.AddEditWorkflowStepsMasterPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="WorkflowStepsMaster.StepId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="WorkflowStepsMaster.StepId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.WorKflowId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="worKflowId" asp-for="WorkflowStepsMaster.WorKflowId" asp-items="@(new SelectList(Model.WorkflowMasterDropDownListData, "WorkflowId", "WorkflowName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.ApprovalLevel"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.ApprovalLevel" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.ApprovalLevel"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.Description"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.Description" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.Description"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.AutoApprove"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.AutoApprove" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.AutoApprove"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.WaitTimeHidden"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.WaitTimeHidden" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.WaitTimeHidden"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.CreatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.CreatedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.CreatedBy"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.CreatedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.CreatedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.UpdatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.UpdatedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.UpdatedBy"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowStepsMaster.UpdatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowStepsMaster.UpdatedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowStepsMaster.UpdatedOn"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

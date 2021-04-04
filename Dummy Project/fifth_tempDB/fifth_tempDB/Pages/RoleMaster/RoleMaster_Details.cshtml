@@ -1,0 +1,44 @@
+@page
+@model fifth_tempDB.Pages.RoleMaster_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.RoleId"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.RoleId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.RoleDescription"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.RoleDescription</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.CreatedOn"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.CreatedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.CreatedBy"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.CreatedBy</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.ModifiedOn"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.ModifiedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="RoleMaster.ModifiedBy"></label>:</td>
+                    <td class="editor-label">@Model.RoleMaster.ModifiedBy</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

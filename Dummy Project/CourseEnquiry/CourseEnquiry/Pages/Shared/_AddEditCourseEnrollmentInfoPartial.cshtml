@@ -1,0 +1,67 @@
+@using CourseEnquiryAPI.Domain;
+@model CourseEnquiry.PartialModels.AddEditCourseEnrollmentInfoPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="CourseEnrollmentInfo.EnrollmentId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="CourseEnrollmentInfo.EnrollmentId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="CourseEnrollmentInfo.EnrollmentId"></label>:</td>
+                        <td><span style="color: red;">*</span></td>
+                        <td class="editor-field"><select id="enrollmentId" asp-for="CourseEnrollmentInfo.EnrollmentId" asp-items="@(new SelectList(Model.CourseEnrollmentInfoDropDownListData, "EnrollmentId", "Comments"))"><option value="">Select One</option></select></td>
+                        <td class="editor-field"><span asp-validation-for="CourseEnrollmentInfo.EnrollmentId"></span></td>
+                
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollmentInfo.CourseId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="courseId" asp-for="CourseEnrollmentInfo.CourseId" asp-items="@(new SelectList(Model.CourseDropDownListData, "CourseId", "CourseName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="courseIdValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollmentInfo.StudentId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="studentId" asp-for="CourseEnrollmentInfo.StudentId" asp-items="@(new SelectList(Model.StudentDropDownListData, "StudentId", "StudentName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="studentIdValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollmentInfo.Comments"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="CourseEnrollmentInfo.Comments" /></td>
+                    <td class="editor-field"><span asp-validation-for="CourseEnrollmentInfo.Comments"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

@@ -1,0 +1,31 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentEnquiry", "StudentEnquiry\StudentEnquiry.csproj", "{4EF9D7E4-5F4E-46D6-8FBE-6CAEF7DF836B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentEnquiryAPI", "StudentEnquiryAPI\StudentEnquiryAPI.csproj", "{F537138B-999B-40D3-97D2-E6559D55D39C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4EF9D7E4-5F4E-46D6-8FBE-6CAEF7DF836B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EF9D7E4-5F4E-46D6-8FBE-6CAEF7DF836B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EF9D7E4-5F4E-46D6-8FBE-6CAEF7DF836B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EF9D7E4-5F4E-46D6-8FBE-6CAEF7DF836B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F537138B-999B-40D3-97D2-E6559D55D39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F537138B-999B-40D3-97D2-E6559D55D39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F537138B-999B-40D3-97D2-E6559D55D39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F537138B-999B-40D3-97D2-E6559D55D39C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	    SolutionGuid = {CD9C2274-F2B8-444B-885E-577800F6BC49}
+	EndGlobalSection
+EndGlobal

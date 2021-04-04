@@ -1,0 +1,31 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fifth_tempDB", "fifth_tempDB\fifth_tempDB.csproj", "{F5492685-0B4B-41FC-9257-5D2740224D7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fifth_tempDBAPI", "fifth_tempDBAPI\fifth_tempDBAPI.csproj", "{858C2B53-C7A8-4725-AA97-4C42416D9FF5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5492685-0B4B-41FC-9257-5D2740224D7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5492685-0B4B-41FC-9257-5D2740224D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5492685-0B4B-41FC-9257-5D2740224D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5492685-0B4B-41FC-9257-5D2740224D7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{858C2B53-C7A8-4725-AA97-4C42416D9FF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{858C2B53-C7A8-4725-AA97-4C42416D9FF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{858C2B53-C7A8-4725-AA97-4C42416D9FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{858C2B53-C7A8-4725-AA97-4C42416D9FF5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	    SolutionGuid = {11DA9489-844F-464D-BE58-AD22DADC8228}
+	EndGlobalSection
+EndGlobal

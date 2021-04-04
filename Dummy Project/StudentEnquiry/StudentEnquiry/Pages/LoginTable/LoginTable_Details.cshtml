@@ -1,0 +1,28 @@
+@page
+@model StudentEnquiry.Pages.LoginTable_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="LoginTable.Adminid"></label>:</td>
+                    <td class="editor-label">@Model.LoginTable.Adminid</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="LoginTable.Password"></label>:</td>
+                    <td class="editor-label">@Model.LoginTable.Password</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

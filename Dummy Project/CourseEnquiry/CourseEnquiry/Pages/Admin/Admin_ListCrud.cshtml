@@ -1,0 +1,199 @@
+@page
+@model CourseEnquiry.Pages.Admin_ListCrudModel
+@{
+    ViewData["Title"] = "List of Admin";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "Admin";
+        var urlAndMethod = "/Admin/Admin_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#adminId").attr('disabled', true);
+        }
+
+        function editItem(adminId, adminName, adminPassword) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(adminId);
+
+            $("#adminId").attr('disabled', false);
+            $("#adminId").val(adminId);
+            $("#adminName").val(adminName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#adminPassword").val(adminPassword.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#adminId").val('');
+            $("#adminName").val('');
+            $("#adminPassword").val('');
+        }
+
+        function getSerializedData() {
+            var adminId = $('#adminId').val();
+
+            if (adminId == '')
+                adminId = '-1';
+
+            var serializedData =
+                "'AdminId':'" + adminId + "'," +
+                "'AdminName':'" + $('#adminName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'AdminPassword':'" + $('#adminPassword').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var adminName = $('#adminName').val();
+            var adminPassword = $('#adminPassword').val();
+
+            // clear all validation messages
+            $('#adminNameValidation').text('');
+            $('#adminPasswordValidation').text('');
+
+            // validation
+            if (adminName == '') { isValid = false; $("#adminNameValidation").text('Admin Name is required.'); }
+            if (adminName.length > 50) { isValid = false; $("#adminNameValidation").text('Admin Name must be 50 characters or less.'); }
+            if (adminPassword == '') { isValid = false; $("#adminPasswordValidation").text('Admin Password is required.'); }
+            if (adminPassword.length > 50) { isValid = false; $("#adminPasswordValidation").text('Admin Password must be 50 characters or less.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/Admin/Admin_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Admin Id','Admin Name','Admin Password', '', ''],
+                colModel: [
+                    { name: 'AdminId', index: 'AdminId', align: 'right' },
+                    { name: 'AdminName', index: 'AdminName', align: 'left' },
+                    { name: 'AdminPassword', index: 'AdminPassword', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'AdminId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Admin',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var adminId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'AdminId');
+                        var adminName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'AdminName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var adminPassword = jQuery("#list-grid").jqGrid('getCell', ids[i], 'AdminPassword').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + adminId + "','" + adminName + "','" + adminPassword + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New Admin">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="Admin.AdminId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Admin.AdminId" id="adminId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Admin.AdminName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Admin.AdminName" id="adminName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="adminNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Admin.AdminPassword"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Admin.AdminPassword" id="adminPassword" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="adminPasswordValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Admin" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New Admin</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

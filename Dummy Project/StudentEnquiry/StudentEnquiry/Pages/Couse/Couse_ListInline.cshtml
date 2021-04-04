@@ -1,0 +1,139 @@
+@page
+@model StudentEnquiry.Pages.Couse_ListInlineModel
+@using System.Text.RegularExpressions;
+@{
+    ViewData["Title"] = "List of Couse";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listinline.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/Couse/Couse_ListInline';
+        var errorMessage = '';
+
+        function getSerializedData(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+            var couseid = rowData.Couseid;
+
+            if (couseid == '')
+                couseid = '-1';
+
+            var serializedData =
+                "'Couseid':'" + couseid + "'," +
+                "'CouseName':'" + $('#' + currentId + '_CouseName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CourseStartDate':'" + $('#' + currentId + '_CourseStartDate').val() + "'," +
+                "'CourseEndDate':'" + $('#' + currentId + '_CourseEndDate').val() + "'," +
+                "'CouseFees':'" + $('#' + currentId + '_CouseFees').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+        
+            var couseName = $('#' + currentId + '_CouseName').val();
+            var courseStartDate = $('#' + currentId + '_CourseStartDate').val();
+            var courseEndDate = $('#' + currentId + '_CourseEndDate').val();
+            var couseFees = $('#' + currentId + '_CouseFees').val();
+
+            // validation
+            if (couseName == '') errorMessage += '- Couse Name is required.<br/>';
+            if (couseName.length > 50) errorMessage += '- Couse Name must be 50 characters or less.<br/>';
+            if (courseStartDate == '') errorMessage += '- Course Start Date is required.<br/>';
+            if (courseStartDate != '' && !isDate(courseStartDate)) errorMessage += '- Course Start Date must be a valid date.<br/>';
+            if (courseEndDate == '') errorMessage += '- Course End Date is required.<br/>';
+            if (courseEndDate != '' && !isDate(courseEndDate)) errorMessage += '- Course End Date must be a valid date.<br/>';
+            if (couseFees == '') errorMessage += '- Couse Fees is required.<br/>';
+            if (couseFees != '' && !isNumeric(couseFees)) errorMessage += '- Couse Fees must be an integer.<br/>';
+
+            if (errorMessage == '')
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+
+            $('#list-grid').jqGrid({
+                url: '/Couse/Couse_ListInline?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Couseid','Couse Name','Course Start Date','Course End Date','Couse Fees', '', ''],
+                colModel: [
+                    { name: 'Couseid', index: 'Couseid', align: 'right' },
+                    { name: 'CouseName', index: 'CouseName', align: 'left', editable: true },
+                    { name: 'CourseStartDate', index: 'CourseStartDate', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'CourseEndDate', index: 'CourseEndDate', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'CouseFees', index: 'CouseFees', align: 'right', editable: true, formatter: 'integer' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'Couseid',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Couse',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a id='editLink" + currentid + "' href='#' onclick=\"editRow('" + currentid + "', 'ListInlineUpdate');\"><img src='/images/Edit.gif' style='border:none;' /></a>" +
+                                "<a id='saveLink" + currentid + "' style='display:none;' href='#' onclick=\"saveRow('" + currentid + "');\"><img src='/images/Checked.gif' style='border:none;' /></a>";
+
+                        deleteLink = "<a href='#' id='deleteLink" + currentid + "' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>" +
+                            "<a id='cancelLink" + currentid + "' style='display:none;' href='#' onclick=\"cancelRow('" + currentid + "');\"><img src='/images/Unchecked.gif' style='border:none;' /></a>";
+
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { auditoperation: auditLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" id="addLink1" onclick="addRow('ListInlineAdd')"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Couse" style="border: none;" /></a>&nbsp;<a href="#" id="addLink2" onclick="addRow('ListInlineAdd')">Add New Couse</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

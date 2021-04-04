@@ -1,0 +1,230 @@
+@page
+@model StudentEnquiry.Pages.Couse_ListCrudModel
+@{
+    ViewData["Title"] = "List of Couse";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "Couse";
+        var urlAndMethod = "/Couse/Couse_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#couseid").attr('disabled', true);
+        }
+
+        function editItem(couseid, couseName, courseStartDate, courseEndDate, couseFees) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(couseid);
+
+            $("#couseid").attr('disabled', false);
+            $("#couseid").val(couseid);
+            $("#couseName").val(couseName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#courseStartDate").val(courseStartDate);
+            $("#courseEndDate").val(courseEndDate);
+            $("#couseFees").val(couseFees);
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#couseid").val('');
+            $("#couseName").val('');
+            $("#courseStartDate").val('');
+            $("#courseEndDate").val('');
+            $("#couseFees").val('');
+        }
+
+        function getSerializedData() {
+            var couseid = $('#couseid').val();
+
+            if (couseid == '')
+                couseid = '-1';
+
+            var serializedData =
+                "'Couseid':'" + couseid + "'," +
+                "'CouseName':'" + $('#couseName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CourseStartDate':'" + $('#courseStartDate').val() + "'," +
+                "'CourseEndDate':'" + $('#courseEndDate').val() + "'," +
+                "'CouseFees':'" + $('#couseFees').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var couseName = $('#couseName').val();
+            var courseStartDate = $('#courseStartDate').val();
+            var courseEndDate = $('#courseEndDate').val();
+            var couseFees = $('#couseFees').val();
+
+            // clear all validation messages
+            $('#couseNameValidation').text('');
+            $('#courseStartDateValidation').text('');
+            $('#courseEndDateValidation').text('');
+            $('#couseFeesValidation').text('');
+
+            // validation
+            if (couseName == '') { isValid = false; $("#couseNameValidation").text('Couse Name is required.'); }
+            if (couseName.length > 50) { isValid = false; $("#couseNameValidation").text('Couse Name must be 50 characters or less.'); }
+            if (courseStartDate == '') { isValid = false; $("#courseStartDateValidation").text('Course Start Date is required.'); }
+            if (courseStartDate != '' && !isDate(courseStartDate)) { isValid = false; $("#courseStartDateValidation").text('Course Start Date must be a valid date.'); }
+            if (courseEndDate == '') { isValid = false; $("#courseEndDateValidation").text('Course End Date is required.'); }
+            if (courseEndDate != '' && !isDate(courseEndDate)) { isValid = false; $("#courseEndDateValidation").text('Course End Date must be a valid date.'); }
+            if (couseFees == '') { isValid = false; $("#couseFeesValidation").text('Couse Fees is required.'); }
+            if (couseFees != '' && !isNumeric(couseFees)) { isValid = false; $("#couseFeesValidation").text('Couse Fees must be an integer.'); }
+            if (couseFees != '' && isNumeric(couseFees) && !isWithinInt64Range(couseFees)) { isValid = false; $("#couseFeesValidation").text('Couse Fees must be between -9223372036854775808 and 9223372036854775807.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/Couse/Couse_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Couseid','Couse Name','Course Start Date','Course End Date','Couse Fees', '', ''],
+                colModel: [
+                    { name: 'Couseid', index: 'Couseid', align: 'right' },
+                    { name: 'CouseName', index: 'CouseName', align: 'left' },
+                    { name: 'CourseStartDate', index: 'CourseStartDate', align: 'left', sorttype: "date" },
+                    { name: 'CourseEndDate', index: 'CourseEndDate', align: 'left', sorttype: "date" },
+                    { name: 'CouseFees', index: 'CouseFees', align: 'right', formatter: 'integer' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'Couseid',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Couse',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var couseid = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Couseid');
+                        var couseName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CouseName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var courseStartDate = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseStartDate');
+                        var courseEndDate = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseEndDate');
+                        var couseFees = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CouseFees');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + couseid + "','" + couseName + "','" + courseStartDate + "','" + courseEndDate + "','" + couseFees + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New Couse">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="Couse.Couseid"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.Couseid" id="couseid" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CouseName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CouseName" id="couseName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="couseNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CourseStartDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CourseStartDate" class="datetextbox" id="courseStartDate" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="courseStartDateValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CourseEndDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CourseEndDate" class="datetextbox" id="courseEndDate" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="courseEndDateValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CouseFees"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CouseFees" id="couseFees" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="couseFeesValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Couse" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New Couse</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

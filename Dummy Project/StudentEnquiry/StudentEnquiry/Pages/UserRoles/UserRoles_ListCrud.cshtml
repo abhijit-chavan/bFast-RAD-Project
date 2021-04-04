@@ -1,0 +1,206 @@
+@page
+@model StudentEnquiry.Pages.UserRoles_ListCrudModel
+@{
+    ViewData["Title"] = "List of User Roles";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "UserRoles";
+        var urlAndMethod = "/UserRoles/UserRoles_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#userRoleId").attr('disabled', true);
+        }
+
+        function editItem(userRoleId, userId, roleId, status) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(userRoleId);
+
+            $("#userRoleId").attr('disabled', false);
+            $("#userRoleId").val(userRoleId);
+            $("#userId").val(userId);
+            $("#roleId").val(roleId);
+
+            if (status.toLowerCase() == "yes")
+                $("#status").prop('checked', true);
+            else
+                $("#status").prop('checked', false);
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#userRoleId").val('');
+            $("#userId").val('');
+            $("#roleId").val('');
+            $("#status").removeAttr('checked');
+        }
+
+        function getSerializedData() {
+            var userRoleId = $('#userRoleId').val();
+
+            if (userRoleId == '')
+                userRoleId = '-1';
+
+            var serializedData =
+                "'UserRoleId':'" + userRoleId + "'," +
+                "'UserId':'" + $('#userId').val() + "'," +
+                "'RoleId':'" + $('#roleId').val() + "'," +
+                "'Status':'" + $('#status').is(':checked') + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+
+            // clear all validation messages
+
+            // validation
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status', '', ''],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'RoleId', index: 'RoleId', align: 'right' },
+                    { name: 'Status', index: 'Status', align: 'center', formatter: 'checkbox' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var userRoleId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UserRoleId');
+                        var userId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UserId');
+                        var roleId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'RoleId');
+                        var status = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Status');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + userRoleId + "','" + userId + "','" + roleId + "','" + status + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New UserRoles">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="UserRoles.UserRoleId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserRoles.UserRoleId" id="userRoleId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.UserId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="userId" asp-for="UserRoles.UserId" asp-items="@(new SelectList(Model.UserMasterDropDownListData, "UserId", "CreatedBy"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.RoleId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="roleId" asp-for="UserRoles.RoleId" asp-items="@(new SelectList(Model.RoleMasterDropDownListData, "RoleId", "CreatedBy"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.Status"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserRoles.Status" type="checkbox" id="status" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New UserRoles" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New UserRoles</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

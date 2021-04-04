@@ -1,0 +1,17 @@
+@page
+@model CourseEnquiry.Pages.WorkflowStepsMaster_AddModel
+@section AdditionalJavaScript {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script type="text/javascript">
+        $(function () {
+            $('.datetextbox').datepicker({dateFormat: 'm/d/yy'});
+        });
+    </script>
+}
+
+<h2>Add Record</h2>
+@Html.ValidationSummary(true)
+<div>
+    @Html.Partial("../Shared/_AddEditWorkflowStepsMasterPartial.cshtml", Model.PartialModel)
+</div>

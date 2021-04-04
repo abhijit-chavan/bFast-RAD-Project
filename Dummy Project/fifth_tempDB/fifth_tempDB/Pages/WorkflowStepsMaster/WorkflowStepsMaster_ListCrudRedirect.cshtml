@@ -1,0 +1,95 @@
+@page
+@model fifth_tempDB.Pages.WorkflowStepsMaster_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of Workflow Steps Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Step Id','Wor Kflow Id','Approval Level','Description','Auto Approve','Wait Time','Created By','Created On','Updated By','Updated On', '', ''],
+                colModel: [
+                    { name: 'StepId', index: 'StepId', align: 'right' },
+                    { name: 'WorKflowId', index: 'WorKflowId', align: 'right' },
+                    { name: 'ApprovalLevel', index: 'ApprovalLevel', align: 'left' },
+                    { name: 'Description', index: 'Description', align: 'left' },
+                    { name: 'AutoApprove', index: 'AutoApprove', align: 'left' },
+                    { name: 'WaitTime', index: 'WaitTime', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'UpdatedBy', index: 'UpdatedBy', align: 'left' },
+                    { name: 'UpdatedOn', index: 'UpdatedOn', align: 'left', sorttype: "date" },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StepId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Steps Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/WorkflowStepsMaster/WorkflowStepsMaster_Update?id=" + currentid + "&returnUrl=/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/WorkflowStepsMaster/WorkflowStepsMaster_Add?returnUrl=/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New WorkflowStepsMaster" style="border: none;" /></a>&nbsp;<a href="/WorkflowStepsMaster/WorkflowStepsMaster_Add?returnUrl=/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect">Add New WorkflowStepsMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

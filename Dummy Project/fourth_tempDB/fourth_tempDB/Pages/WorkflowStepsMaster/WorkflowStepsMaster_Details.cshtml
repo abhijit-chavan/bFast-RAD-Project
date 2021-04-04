@@ -1,0 +1,60 @@
+@page
+@model fourth_tempDB.Pages.WorkflowStepsMaster_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.StepId"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.StepId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.WorKflowId"></label>:</td>
+                    <td class="editor-field"><label asp-for="WorkflowStepsMaster.WorKflowId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.ApprovalLevel"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.ApprovalLevel</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.Description"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.Description</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.AutoApprove"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.AutoApprove</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.WaitTime"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.WaitTime</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.CreatedBy"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.CreatedBy</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.CreatedOn"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.CreatedOn</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.UpdatedBy"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.UpdatedBy</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="WorkflowStepsMaster.UpdatedOn"></label>:</td>
+                    <td class="editor-label">@Model.WorkflowStepsMaster.UpdatedOn</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

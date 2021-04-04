@@ -1,0 +1,40 @@
+@page
+@model StudentEnquiry.Pages.Couse_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Couse.Couseid"></label>:</td>
+                    <td class="editor-label">@Model.Couse.Couseid</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Couse.CouseName"></label>:</td>
+                    <td class="editor-label">@Model.Couse.CouseName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Couse.CourseStartDate"></label>:</td>
+                    <td class="editor-label">@Model.Couse.CourseStartDate</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Couse.CourseEndDate"></label>:</td>
+                    <td class="editor-label">@Model.Couse.CourseEndDate</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Couse.CouseFees"></label>:</td>
+                    <td class="editor-label">@Model.Couse.CouseFees</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

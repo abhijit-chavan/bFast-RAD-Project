@@ -1,0 +1,103 @@
+@page
+@model StudentEnquiry.Pages.Enquiry_ListSearchModel
+@{
+    ViewData["Title"] = "List of Enquiry";
+
+    string enquiryIdSelectValues = ":";
+    string courseIdSelectValues = ":";
+
+    foreach (var item in Model.EnquiryDropDownListData.OrderBy(e1 => e1.EnquiryId))
+    {
+        enquiryIdSelectValues += ";" + item.EnquiryId + ":" + item.EnquiryId;
+    }
+
+    foreach (var item in Model.CouseDropDownListData.OrderBy(c => c.Couseid))
+    {
+        courseIdSelectValues += ";" + item.Couseid + ":" + item.Couseid;
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+            var enquiryIdSelectValues = "@enquiryIdSelectValues";
+            var courseIdSelectValues = "@courseIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/Enquiry/Enquiry_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enquiry Id','Course Id','Student Name','Contact No','Comments'],
+                colModel: [
+                    { name: 'EnquiryId', index: 'EnquiryId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: enquiryIdSelectValues } },
+                    { name: 'CourseId', index: 'CourseId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: courseIdSelectValues } },
+                    { name: 'StudentName', index: 'StudentName', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'ContactNo', index: 'ContactNo', align: 'right', formatter: 'integer' },
+                    { name: 'Comments', index: 'Comments', align: 'left', searchoptions: { sopt: ['cn']} }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnquiryId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Enquiry',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "ContactNo" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Contact No must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

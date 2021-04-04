@@ -1,0 +1,102 @@
+@page
+@model fourth_tempDB.Pages.WorkflowMaster_ListSearchModel
+@{
+    ViewData["Title"] = "List of Workflow Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowMaster/WorkflowMaster_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Workflow Id','Workflow Name','Level Of Approvals','Created By','Created On','Updatedby','Updatedon'],
+                colModel: [
+                    { name: 'WorkflowId', index: 'WorkflowId', align: 'right' },
+                    { name: 'WorkflowName', index: 'WorkflowName', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'LevelOfApprovals', index: 'LevelOfApprovals', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'Updatedby', index: 'Updatedby', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'Updatedon', index: 'Updatedon', align: 'left', sorttype: "date" }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'WorkflowId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Master',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "WorkflowId" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Workflow Id must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "LevelOfApprovals" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Level Of Approvals must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "CreatedOn" && !isDate(enteredValue)) {
+                        validationErrors += "  Created On must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "Updatedon" && !isDate(enteredValue)) {
+                        validationErrors += "  Updatedon must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

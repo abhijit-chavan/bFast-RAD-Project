@@ -1,0 +1,106 @@
+@page
+@model TemporaryDBappllication.Pages.WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowIdModel
+@{
+    ViewData["Title"] = "List of Workflow Steps Master By Workflow Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowId?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Workflow Id','Workflow Name','Level Of Approvals','Created By','Created On','Updatedby','Updatedon'],
+                colModel: [
+                    { name: 'WorkflowId', index: 'WorkflowId', align: 'right' },
+                    { name: 'WorkflowName', index: 'WorkflowName', align: 'left' },
+                    { name: 'LevelOfApprovals', index: 'LevelOfApprovals', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'Updatedby', index: 'Updatedby', align: 'left' },
+                    { name: 'Updatedon', index: 'Updatedon', align: 'left', sorttype: "date" },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 5,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'WorkflowId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Steps Master By Workflow Master',
+                height: '100%',
+                width: '1200',
+                multiselect: false,
+                subGrid: true,
+                subGridRowExpanded: SubGridDetail
+            });
+        });
+
+        function SubGridDetail(subgrid_id, row_id) {
+            var subgrid_table_id, pager_id;
+            subgrid_table_id = subgrid_id + '_t';
+            pager_id = 'p_' + subgrid_table_id;
+
+            $('#' + subgrid_id).html("<div style='padding: 20px;'><table id='" + subgrid_table_id + "'></table><div id='" + pager_id + "'></div></div>");
+
+            $('#' + subgrid_table_id).jqGrid({
+                url: "/WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowId?handler=GridDataWithFilters&filters={\"groupOp\":\"AND\",\"rules\":[{\"field\":\"WorKflowId\",\"op\":\"eq\",\"data\":\"" + row_id + "\"}]}",
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Step Id','Wor Kflow Id','Approval Level','Description','Auto Approve','Wait Time','Created By','Created On','Updated By','Updated On'],
+                colModel: [
+                    { name: 'StepId', index: 'StepId', align: 'right' },
+                    { name: 'WorKflowId', index: 'WorKflowId', align: 'right' },
+                    { name: 'ApprovalLevel', index: 'ApprovalLevel', align: 'left' },
+                    { name: 'Description', index: 'Description', align: 'left' },
+                    { name: 'AutoApprove', index: 'AutoApprove', align: 'left' },
+                    { name: 'WaitTime', index: 'WaitTime', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'UpdatedBy', index: 'UpdatedBy', align: 'left' },
+                    { name: 'UpdatedOn', index: 'UpdatedOn', align: 'left', sorttype: "date" },
+                ],
+                pager: pager_id,
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StepId',
+                sortorder: "asc",
+                viewrecords: true,
+                height: '100%',
+                width: '1130'
+            });
+        }
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

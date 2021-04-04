@@ -1,0 +1,269 @@
+@page
+@model CourseEnquiry1.Pages.UserMaster_ListCrudModel
+@{
+    ViewData["Title"] = "List of User Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "UserMaster";
+        var urlAndMethod = "/UserMaster/UserMaster_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#userId").attr('disabled', true);
+        }
+
+        function editItem(userId, userName, password, email, createdOn, createdBy, modifiedOn, modifiedBy) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(userId);
+
+            $("#userId").attr('disabled', false);
+            $("#userId").val(userId);
+            $("#userName").val(userName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#password").val(password.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#email").val(email.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#createdOn").val(createdOn);
+            $("#createdBy").val(createdBy.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#modifiedOn").val(modifiedOn);
+            $("#modifiedBy").val(modifiedBy.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#userId").val('');
+            $("#userName").val('');
+            $("#password").val('');
+            $("#email").val('');
+            $("#createdOn").val('');
+            $("#createdBy").val('');
+            $("#modifiedOn").val('');
+            $("#modifiedBy").val('');
+        }
+
+        function getSerializedData() {
+            var userId = $('#userId').val();
+
+            if (userId == '')
+                userId = '-1';
+
+            var serializedData =
+                "'UserId':'" + userId + "'," +
+                "'UserName':'" + $('#userName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Password':'" + $('#password').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Email':'" + $('#email').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CreatedOn':'" + $('#createdOn').val() + "'," +
+                "'CreatedBy':'" + $('#createdBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'ModifiedOn':'" + $('#modifiedOn').val() + "'," +
+                "'ModifiedBy':'" + $('#modifiedBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var userName = $('#userName').val();
+            var password = $('#password').val();
+            var email = $('#email').val();
+            var createdOn = $('#createdOn').val();
+            var createdBy = $('#createdBy').val();
+            var modifiedOn = $('#modifiedOn').val();
+            var modifiedBy = $('#modifiedBy').val();
+
+            // clear all validation messages
+            $('#userNameValidation').text('');
+            $('#passwordValidation').text('');
+            $('#emailValidation').text('');
+            $('#createdOnValidation').text('');
+            $('#createdByValidation').text('');
+            $('#modifiedOnValidation').text('');
+            $('#modifiedByValidation').text('');
+
+            // validation
+            if (userName.length > 50) { isValid = false; $("#userNameValidation").text('User Name must be 50 characters or less.'); }
+            if (password.length > 50) { isValid = false; $("#passwordValidation").text('Password must be 50 characters or less.'); }
+            if (email.length > 50) { isValid = false; $("#emailValidation").text('Email must be 50 characters or less.'); }
+            if (createdOn == '') { isValid = false; $("#createdOnValidation").text('Created On is required.'); }
+            if (createdOn != '' && !isDate(createdOn)) { isValid = false; $("#createdOnValidation").text('Created On must be a valid date.'); }
+            if (createdBy == '') { isValid = false; $("#createdByValidation").text('Created By is required.'); }
+            if (createdBy.length > 50) { isValid = false; $("#createdByValidation").text('Created By must be 50 characters or less.'); }
+            if (modifiedOn != '' && !isDate(modifiedOn)) { isValid = false; $("#modifiedOnValidation").text('Modified On must be a valid date.'); }
+            if (modifiedBy.length > 50) { isValid = false; $("#modifiedByValidation").text('Modified By must be 50 characters or less.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/UserMaster/UserMaster_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Id','User Name','Password','Email','Created On','Created By','Modified On','Modified By', '', ''],
+                colModel: [
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'UserName', index: 'UserName', align: 'left' },
+                    { name: 'Password', index: 'Password', align: 'left' },
+                    { name: 'Email', index: 'Email', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'ModifiedOn', index: 'ModifiedOn', align: 'left', sorttype: "date" },
+                    { name: 'ModifiedBy', index: 'ModifiedBy', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var userId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UserId');
+                        var userName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'UserName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var password = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Password').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var email = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Email').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var createdOn = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedOn');
+                        var createdBy = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedBy').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var modifiedOn = jQuery("#list-grid").jqGrid('getCell', ids[i], 'ModifiedOn');
+                        var modifiedBy = jQuery("#list-grid").jqGrid('getCell', ids[i], 'ModifiedBy').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + userId + "','" + userName + "','" + password + "','" + email + "','" + createdOn + "','" + createdBy + "','" + modifiedOn + "','" + modifiedBy + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New UserMaster">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="UserMaster.UserId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserMaster.UserId" id="userId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.UserName"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.UserName" id="userName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="userNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.Password"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.Password" id="password" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="passwordValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.Email"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.Email" id="email" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="emailValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserMaster.CreatedOn" class="datetextbox" id="createdOn" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdOnValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.CreatedBy"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserMaster.CreatedBy" id="createdBy" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdByValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.ModifiedOn"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.ModifiedOn" class="datetextbox" id="modifiedOn" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="modifiedOnValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.ModifiedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.ModifiedBy" id="modifiedBy" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="modifiedByValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New UserMaster" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New UserMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

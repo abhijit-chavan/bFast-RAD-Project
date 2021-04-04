@@ -1,0 +1,211 @@
+@page
+@model CourseEnquiry1.Pages.CourseEnrollment_ListCrudModel
+@{
+    ViewData["Title"] = "List of Course Enrollment";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "CourseEnrollment";
+        var urlAndMethod = "/CourseEnrollment/CourseEnrollment_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#enrollmentId").attr('disabled', true);
+        }
+
+        function editItem(enrollmentId, courseName, studentName, comments) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(enrollmentId);
+
+            $("#enrollmentId").attr('disabled', false);
+            $("#enrollmentId").val(enrollmentId);
+            $("#courseName").val(courseName);
+            $("#studentName").val(studentName);
+            $("#comments").val(comments.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#enrollmentId").val('');
+            $("#courseName").val('');
+            $("#studentName").val('');
+            $("#comments").val('');
+        }
+
+        function getSerializedData() {
+            var enrollmentId = $('#enrollmentId').val();
+
+            if (enrollmentId == '')
+                enrollmentId = '-1';
+
+            var serializedData =
+                "'EnrollmentId':'" + enrollmentId + "'," +
+                "'CourseName':'" + $('#courseName').val() + "'," +
+                "'StudentName':'" + $('#studentName').val() + "'," +
+                "'Comments':'" + $('#comments').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var courseName = $('#courseName').val();
+            var studentName = $('#studentName').val();
+            var comments = $('#comments').val();
+
+            // clear all validation messages
+            $('#courseNameValidation').text('');
+            $('#studentNameValidation').text('');
+            $('#commentsValidation').text('');
+
+            // validation
+            if (courseName == '') { isValid = false; $("#courseNameValidation").text('Course Name is required.'); }
+            if (studentName == '') { isValid = false; $("#studentNameValidation").text('Student Name is required.'); }
+            if (comments.length > 50) { isValid = false; $("#commentsValidation").text('Comments must be 50 characters or less.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/CourseEnrollment/CourseEnrollment_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enrollment Id','Course Name','Student Name','Comments', '', ''],
+                colModel: [
+                    { name: 'EnrollmentId', index: 'EnrollmentId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'right' },
+                    { name: 'Comments', index: 'Comments', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnrollmentId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course Enrollment',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var enrollmentId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'EnrollmentId');
+                        var courseName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseName');
+                        var studentName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StudentName');
+                        var comments = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Comments').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + enrollmentId + "','" + courseName + "','" + studentName + "','" + comments + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New CourseEnrollment">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="CourseEnrollment.EnrollmentId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="CourseEnrollment.EnrollmentId" id="enrollmentId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollment.CourseName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="courseName" asp-for="CourseEnrollment.CourseName" asp-items="@(new SelectList(Model.CourseDropDownListData, "CourseId", "CourseName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="courseNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollment.StudentName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="studentName" asp-for="CourseEnrollment.StudentName" asp-items="@(new SelectList(Model.StudentDropDownListData, "StudenId", "StudentName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="studentNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="CourseEnrollment.Comments"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="CourseEnrollment.Comments" id="comments" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="commentsValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New CourseEnrollment" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New CourseEnrollment</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

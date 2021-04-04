@@ -1,0 +1,68 @@
+@page
+@model StudentEnquiry.Pages.Enquiry_ListReadOnlyModel
+@{
+    ViewData["Title"] = "List of Enquiry";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        function enquiryIdLink(cellvalue, options, rowObject) {
+            return "<a href='/Enquiry/Enquiry_Details?id=" + cellvalue + "&returnUrl=/Enquiry/Enquiry_ListReadOnly'>" + cellvalue + "</a>";
+        }
+
+        function courseIdLink(cellvalue, options, rowObject) {
+            return "<a href='/Couse/Couse_Details?id=" + cellvalue + "&returnUrl=/Enquiry/Enquiry_ListReadOnly'>" + cellvalue + "</a>";
+        }
+
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/Enquiry/Enquiry_ListReadOnly?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enquiry Id','Course Id','Student Name','Contact No','Comments'],
+                colModel: [
+                    { name: 'EnquiryId', index: 'EnquiryId', align: 'right', formatter: enquiryIdLink },
+                    { name: 'CourseId', index: 'CourseId', align: 'right', formatter: courseIdLink },
+                    { name: 'StudentName', index: 'StudentName', align: 'left' },
+                    { name: 'ContactNo', index: 'ContactNo', align: 'right', formatter: 'integer' },
+                    { name: 'Comments', index: 'Comments', align: 'left' }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnquiryId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Enquiry',
+                height: '100%',
+                width: '1200'
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

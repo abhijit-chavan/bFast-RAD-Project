@@ -1,0 +1,257 @@
+@page
+@model fifth_tempDB.Pages.WorkflowMaster_ListCrudModel
+@{
+    ViewData["Title"] = "List of Workflow Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "WorkflowMaster";
+        var urlAndMethod = "/WorkflowMaster/WorkflowMaster_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#workflowId").attr('disabled', true);
+        }
+
+        function editItem(workflowId, workflowName, levelOfApprovals, createdBy, createdOn, updatedby, updatedon) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(workflowId);
+
+            $("#workflowId").attr('disabled', false);
+            $("#workflowId").val(workflowId);
+            $("#workflowName").val(workflowName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#levelOfApprovals").val(levelOfApprovals);
+            $("#createdBy").val(createdBy.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#createdOn").val(createdOn);
+            $("#updatedby").val(updatedby.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#updatedon").val(updatedon);
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#workflowId").val('');
+            $("#workflowName").val('');
+            $("#levelOfApprovals").val('');
+            $("#createdBy").val('');
+            $("#createdOn").val('');
+            $("#updatedby").val('');
+            $("#updatedon").val('');
+        }
+
+        function getSerializedData() {
+            var workflowId = $('#workflowId').val();
+
+            if (workflowId == '')
+                workflowId = '-1';
+
+            var serializedData =
+                "'WorkflowId':'" + workflowId + "'," +
+                "'WorkflowName':'" + $('#workflowName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'LevelOfApprovals':'" + $('#levelOfApprovals').val() + "'," +
+                "'CreatedBy':'" + $('#createdBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CreatedOn':'" + $('#createdOn').val() + "'," +
+                "'Updatedby':'" + $('#updatedby').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Updatedon':'" + $('#updatedon').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var workflowName = $('#workflowName').val();
+            var levelOfApprovals = $('#levelOfApprovals').val();
+            var createdBy = $('#createdBy').val();
+            var createdOn = $('#createdOn').val();
+            var updatedby = $('#updatedby').val();
+            var updatedon = $('#updatedon').val();
+
+            // clear all validation messages
+            $('#workflowNameValidation').text('');
+            $('#levelOfApprovalsValidation').text('');
+            $('#createdByValidation').text('');
+            $('#createdOnValidation').text('');
+            $('#updatedbyValidation').text('');
+            $('#updatedonValidation').text('');
+
+            // validation
+            if (workflowName == '') { isValid = false; $("#workflowNameValidation").text('Workflow Name is required.'); }
+            if (workflowName.length > 50) { isValid = false; $("#workflowNameValidation").text('Workflow Name must be 50 characters or less.'); }
+            if (levelOfApprovals != '' && !isNumeric(levelOfApprovals)) { isValid = false; $("#levelOfApprovalsValidation").text('Level Of Approvals must be an integer.'); }
+            if (levelOfApprovals != '' && isNumeric(levelOfApprovals) && !isWithinInt32Range(levelOfApprovals)) { isValid = false; $("#levelOfApprovalsValidation").text('Level Of Approvals must be between -2147483648 and 2147483647.'); }
+            if (createdBy.length > 50) { isValid = false; $("#createdByValidation").text('Created By must be 50 characters or less.'); }
+            if (createdOn == '') { isValid = false; $("#createdOnValidation").text('Created On is required.'); }
+            if (createdOn != '' && !isDate(createdOn)) { isValid = false; $("#createdOnValidation").text('Created On must be a valid date.'); }
+            if (updatedby.length > 50) { isValid = false; $("#updatedbyValidation").text('Updatedby must be 50 characters or less.'); }
+            if (updatedon == '') { isValid = false; $("#updatedonValidation").text('Updatedon is required.'); }
+            if (updatedon != '' && !isDate(updatedon)) { isValid = false; $("#updatedonValidation").text('Updatedon must be a valid date.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowMaster/WorkflowMaster_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Workflow Id','Workflow Name','Level Of Approvals','Created By','Created On','Updatedby','Updatedon', '', ''],
+                colModel: [
+                    { name: 'WorkflowId', index: 'WorkflowId', align: 'right' },
+                    { name: 'WorkflowName', index: 'WorkflowName', align: 'left' },
+                    { name: 'LevelOfApprovals', index: 'LevelOfApprovals', align: 'right', formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'Updatedby', index: 'Updatedby', align: 'left' },
+                    { name: 'Updatedon', index: 'Updatedon', align: 'left', sorttype: "date" },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'WorkflowId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var workflowId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'WorkflowId');
+                        var workflowName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'WorkflowName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var levelOfApprovals = jQuery("#list-grid").jqGrid('getCell', ids[i], 'LevelOfApprovals');
+                        var createdBy = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedBy').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var createdOn = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CreatedOn');
+                        var updatedby = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Updatedby').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var updatedon = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Updatedon');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + workflowId + "','" + workflowName + "','" + levelOfApprovals + "','" + createdBy + "','" + createdOn + "','" + updatedby + "','" + updatedon + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New WorkflowMaster">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="WorkflowMaster.WorkflowId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.WorkflowId" id="workflowId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.WorkflowName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.WorkflowName" id="workflowName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="workflowNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.LevelOfApprovalsHidden"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.LevelOfApprovalsHidden" id="levelOfApprovals" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="levelOfApprovalsValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.CreatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.CreatedBy" id="createdBy" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdByValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.CreatedOn" class="datetextbox" id="createdOn" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="createdOnValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.Updatedby"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.Updatedby" id="updatedby" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="updatedbyValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.Updatedon"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.Updatedon" class="datetextbox" id="updatedon" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="updatedonValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New WorkflowMaster" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New WorkflowMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

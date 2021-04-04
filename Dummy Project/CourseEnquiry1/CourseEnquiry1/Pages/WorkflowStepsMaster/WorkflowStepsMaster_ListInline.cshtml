@@ -1,0 +1,163 @@
+@page
+@model CourseEnquiry1.Pages.WorkflowStepsMaster_ListInlineModel
+@using System.Text.RegularExpressions;
+@{
+    ViewData["Title"] = "List of Workflow Steps Master";
+
+    string worKflowIdSelectValues = ":";
+
+    foreach (var item in Model.WorkflowMasterDropDownListData.OrderBy(w => w.WorkflowId))
+    {
+        worKflowIdSelectValues += ";" + item.WorkflowId + ":" + item.WorkflowId + " - " + Regex.Replace(item.WorkflowName is null ? "" : item.WorkflowName, "[^a-zA-Z0-9 -]", "");
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listinline.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/WorkflowStepsMaster/WorkflowStepsMaster_ListInline';
+        var errorMessage = '';
+
+        function getSerializedData(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+            var stepId = rowData.StepId;
+
+            if (stepId == '')
+                stepId = '-1';
+
+            var serializedData =
+                "'StepId':'" + stepId + "'," +
+                "'WorKflowId':'" + $('#' + currentId + '_WorKflowId').val() + "'," +
+                "'ApprovalLevel':'" + $('#' + currentId + '_ApprovalLevel').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'Description':'" + $('#' + currentId + '_Description').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'AutoApprove':'" + $('#' + currentId + '_AutoApprove').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'WaitTime':'" + $('#' + currentId + '_WaitTime').val() + "'," +
+                "'CreatedBy':'" + $('#' + currentId + '_CreatedBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'CreatedOn':'" + $('#' + currentId + '_CreatedOn').val() + "'," +
+                "'UpdatedBy':'" + $('#' + currentId + '_UpdatedBy').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'UpdatedOn':'" + $('#' + currentId + '_UpdatedOn').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+        
+            var approvalLevel = $('#' + currentId + '_ApprovalLevel').val();
+            var description = $('#' + currentId + '_Description').val();
+            var autoApprove = $('#' + currentId + '_AutoApprove').val();
+            var waitTime = $('#' + currentId + '_WaitTime').val();
+            var createdBy = $('#' + currentId + '_CreatedBy').val();
+            var createdOn = $('#' + currentId + '_CreatedOn').val();
+            var updatedBy = $('#' + currentId + '_UpdatedBy').val();
+            var updatedOn = $('#' + currentId + '_UpdatedOn').val();
+
+            // validation
+            if (approvalLevel.length > 50) errorMessage += '- Approval Level must be 50 characters or less.<br/>';
+            if (description.length > 50) errorMessage += '- Description must be 50 characters or less.<br/>';
+            if (autoApprove.length > 50) errorMessage += '- Auto Approve must be 50 characters or less.<br/>';
+            if (waitTime != '' && !isNumeric(waitTime)) errorMessage += '- Wait Time must be an integer.<br/>';
+            if (createdBy.length > 50) errorMessage += '- Created By must be 50 characters or less.<br/>';
+            if (createdOn == '') errorMessage += '- Created On is required.<br/>';
+            if (createdOn != '' && !isDate(createdOn)) errorMessage += '- Created On must be a valid date.<br/>';
+            if (updatedBy.length > 50) errorMessage += '- Updated By must be 50 characters or less.<br/>';
+            if (updatedOn == '') errorMessage += '- Updated On is required.<br/>';
+            if (updatedOn != '' && !isDate(updatedOn)) errorMessage += '- Updated On must be a valid date.<br/>';
+
+            if (errorMessage == '')
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            var worKflowIdSelectValues = "@worKflowIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/WorkflowStepsMaster/WorkflowStepsMaster_ListInline?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Step Id','Wor Kflow Id','Approval Level','Description','Auto Approve','Wait Time','Created By','Created On','Updated By','Updated On', '', ''],
+                colModel: [
+                    { name: 'StepId', index: 'StepId', align: 'right' },
+                    { name: 'WorKflowId', index: 'WorKflowId', align: 'left', editable: true, formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: worKflowIdSelectValues } },
+                    { name: 'ApprovalLevel', index: 'ApprovalLevel', align: 'left', editable: true },
+                    { name: 'Description', index: 'Description', align: 'left', editable: true },
+                    { name: 'AutoApprove', index: 'AutoApprove', align: 'left', editable: true },
+                    { name: 'WaitTime', index: 'WaitTime', align: 'right', editable: true, formatter: 'integer' },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left', editable: true },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'UpdatedBy', index: 'UpdatedBy', align: 'left', editable: true },
+                    { name: 'UpdatedOn', index: 'UpdatedOn', align: 'left', editable: true, sorttype: "date", editoptions: { size: 20,  dataInit: function (el) { $(el).datepicker({ dateFormat: 'm/d/yy' }); }} },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StepId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Workflow Steps Master',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a id='editLink" + currentid + "' href='#' onclick=\"editRow('" + currentid + "', 'ListInlineUpdate');\"><img src='/images/Edit.gif' style='border:none;' /></a>" +
+                                "<a id='saveLink" + currentid + "' style='display:none;' href='#' onclick=\"saveRow('" + currentid + "');\"><img src='/images/Checked.gif' style='border:none;' /></a>";
+
+                        deleteLink = "<a href='#' id='deleteLink" + currentid + "' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>" +
+                            "<a id='cancelLink" + currentid + "' style='display:none;' href='#' onclick=\"cancelRow('" + currentid + "');\"><img src='/images/Unchecked.gif' style='border:none;' /></a>";
+
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { auditoperation: auditLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" id="addLink1" onclick="addRow('ListInlineAdd')"><img src="@Url.Content("~/images/Add.gif")" alt="Add New WorkflowStepsMaster" style="border: none;" /></a>&nbsp;<a href="#" id="addLink2" onclick="addRow('ListInlineAdd')">Add New WorkflowStepsMaster</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

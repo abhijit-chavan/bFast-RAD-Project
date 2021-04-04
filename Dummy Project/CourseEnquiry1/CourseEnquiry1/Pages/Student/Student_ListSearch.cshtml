@@ -1,0 +1,92 @@
+@page
+@model CourseEnquiry1.Pages.Student_ListSearchModel
+@{
+    ViewData["Title"] = "List of Student";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+
+            $('#list-grid').jqGrid({
+                url: '/Student/Student_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Studen Id','Student Name','Email Id','Contact Number','Password'],
+                colModel: [
+                    { name: 'StudenId', index: 'StudenId', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'EmailId', index: 'EmailId', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'ContactNumber', index: 'ContactNumber', align: 'right', formatter: 'integer' },
+                    { name: 'Password', index: 'Password', align: 'left', searchoptions: { sopt: ['cn']} }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StudenId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Student',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "StudenId" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Studen Id must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "ContactNumber" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Contact Number must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

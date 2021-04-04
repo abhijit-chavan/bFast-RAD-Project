@@ -1,0 +1,90 @@
+@page
+@model CourseEnquiry.Pages.Course_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of Course";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/Course/Course_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/Course/Course_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Course Id','Course Name','Start Date','End Date','Fees', '', ''],
+                colModel: [
+                    { name: 'CourseId', index: 'CourseId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'left' },
+                    { name: 'StartDate', index: 'StartDate', align: 'left', sorttype: "date" },
+                    { name: 'EndDate', index: 'EndDate', align: 'left', sorttype: "date" },
+                    { name: 'Fees', index: 'Fees', align: 'right', formatter: 'currency', formatoptions: { decimalPlaces: 2, prefix: "$"} },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'CourseId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/Course/Course_Update?id=" + currentid + "&returnUrl=/Course/Course_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/Course/Course_Add?returnUrl=/Course/Course_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Course" style="border: none;" /></a>&nbsp;<a href="/Course/Course_Add?returnUrl=/Course/Course_ListCrudRedirect">Add New Course</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

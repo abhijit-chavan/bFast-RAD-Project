@@ -1,0 +1,70 @@
+@page
+@model CourseEnquiry.Pages.UserRoles_ListScrollLoadModel
+@{
+    ViewData["Title"] = "List of User Roles";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        function userIdLink(cellvalue, options, rowObject) {
+            return "<a href='/UserMaster/UserMaster_Details?id=" + cellvalue + "&returnUrl=/UserRoles/UserRoles_ListScrollLoad'>" + cellvalue + "</a>";
+        }
+
+        function roleIdLink(cellvalue, options, rowObject) {
+            return "<a href='/RoleMaster/RoleMaster_Details?id=" + cellvalue + "&returnUrl=/UserRoles/UserRoles_ListScrollLoad'>" + cellvalue + "</a>";
+        }
+
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListScrollLoad?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status'],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'right', formatter: userIdLink },
+                    { name: 'RoleId', index: 'RoleId', align: 'right', formatter: roleIdLink },
+                    { name: 'Status', index: 'Status', align: 'center', formatter: 'checkbox' }
+                ],
+                pager: $('#list-pager'),
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                scroll: 1,
+                gridview: true,
+                rownumbers: true,
+                rownumWidth: 20,
+                rowNum: 20,
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles',
+                height: '250',
+                width: '1200'
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

@@ -1,0 +1,57 @@
+@using TemporaryDBappllicationAPI.Domain;
+@model TemporaryDBappllication.PartialModels.AddEditUserRolesPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="UserRoles.UserRoleId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="UserRoles.UserRoleId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.UserId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="userId" asp-for="UserRoles.UserId" asp-items="@(new SelectList(Model.UserMasterDropDownListData, "UserId", "CreatedBy"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.RoleId"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><select id="roleId" asp-for="UserRoles.RoleId" asp-items="@(new SelectList(Model.RoleMasterDropDownListData, "RoleId", "CreatedBy"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserRoles.Status"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserRoles.Status" type="checkbox" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

@@ -1,0 +1,78 @@
+@page
+@using TemporaryDBappllicationAPI.Domain;
+@model TemporaryDBappllication.Pages.UserMaster_UnboundModel
+
+@section AdditionalJavaScript {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script type="text/javascript">
+        $(function () {
+            $('.datetextbox').datepicker({dateFormat: 'm/d/yy'});
+        });
+    </script>
+}
+
+<h2>Unbound Record</h2>
+<div>
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.UserName"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.UserName" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.UserName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.Password"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.Password" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.Password"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.Email"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.Email" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.Email"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserMaster.CreatedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.CreatedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.CreatedBy"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="UserMaster.CreatedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.CreatedBy"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.ModifiedOn"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.ModifiedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.ModifiedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="UserMaster.ModifiedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="UserMaster.ModifiedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="UserMaster.ModifiedBy"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input type="submit" asp-page-handler="Submit" value="Submit" class="button-150" />
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>

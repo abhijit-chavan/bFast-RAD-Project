@@ -1,0 +1,63 @@
+@using StudentEnquiryAPI.Domain;
+@model StudentEnquiry.PartialModels.AddEditCousePartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="Couse.Couseid"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="Couse.Couseid" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CouseName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CouseName" /></td>
+                    <td class="editor-field"><span asp-validation-for="Couse.CouseName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CourseStartDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CourseStartDate" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="Couse.CourseStartDate"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CourseEndDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CourseEndDate" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="Couse.CourseEndDate"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Couse.CouseFees"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Couse.CouseFees" /></td>
+                    <td class="editor-field"><span asp-validation-for="Couse.CouseFees"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

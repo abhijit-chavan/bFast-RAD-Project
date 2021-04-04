@@ -1,0 +1,67 @@
+@page
+@model CourseEnquiry1.Pages.CourseEnrollment_ListGroupedByCourseNameModel
+@{
+    ViewData["Title"] = "List of Course Enrollment By Course";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/CourseEnrollment/CourseEnrollment_ListGroupedByCourseName?handler=GridDataGroupedByCourseName',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enrollment Id','Course Name','Student Name','Comments', ''],
+                colModel: [
+                    { name: 'EnrollmentId', index: 'EnrollmentId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'right' },
+                    { name: 'Comments', index: 'Comments', align: 'left' },
+                    { name: 'CourseName', index: 'CourseName' }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnrollmentId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course Enrollment By Course',
+                height: '100%',
+                width: '1200',
+                grouping: true,
+                groupingView: {
+                    groupField: ['CourseName'],
+                    groupColumnShow: [false],
+                    groupText: ['<b>{0} ({1} items)</b>'],
+                    groupDataSorted: true
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

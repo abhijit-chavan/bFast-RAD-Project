@@ -1,0 +1,90 @@
+@page
+@model StudentEnquiry.Pages.Couse_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of Couse";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/Couse/Couse_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/Couse/Couse_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Couseid','Couse Name','Course Start Date','Course End Date','Couse Fees', '', ''],
+                colModel: [
+                    { name: 'Couseid', index: 'Couseid', align: 'right' },
+                    { name: 'CouseName', index: 'CouseName', align: 'left' },
+                    { name: 'CourseStartDate', index: 'CourseStartDate', align: 'left', sorttype: "date" },
+                    { name: 'CourseEndDate', index: 'CourseEndDate', align: 'left', sorttype: "date" },
+                    { name: 'CouseFees', index: 'CouseFees', align: 'right', formatter: 'integer' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'Couseid',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Couse',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/Couse/Couse_Update?id=" + currentid + "&returnUrl=/Couse/Couse_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/Couse/Couse_Add?returnUrl=/Couse/Couse_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Couse" style="border: none;" /></a>&nbsp;<a href="/Couse/Couse_Add?returnUrl=/Couse/Couse_ListCrudRedirect">Add New Couse</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

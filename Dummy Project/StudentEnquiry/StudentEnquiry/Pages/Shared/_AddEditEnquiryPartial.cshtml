@@ -1,0 +1,63 @@
+@using StudentEnquiryAPI.Domain;
+@model StudentEnquiry.PartialModels.AddEditEnquiryPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="Enquiry.EnquiryId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="Enquiry.EnquiryId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.CourseId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><select id="courseId" asp-for="Enquiry.CourseId" asp-items="@(new SelectList(Model.CouseDropDownListData, "Couseid", "CouseName"))"><option value="">Select One</option></select></td>
+                    <td class="editor-field"><span id="courseIdValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.StudentName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Enquiry.StudentName" /></td>
+                    <td class="editor-field"><span asp-validation-for="Enquiry.StudentName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.ContactNo"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Enquiry.ContactNo" /></td>
+                    <td class="editor-field"><span asp-validation-for="Enquiry.ContactNo"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Enquiry.Comments"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="Enquiry.Comments" /></td>
+                    <td class="editor-field"><span asp-validation-for="Enquiry.Comments"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

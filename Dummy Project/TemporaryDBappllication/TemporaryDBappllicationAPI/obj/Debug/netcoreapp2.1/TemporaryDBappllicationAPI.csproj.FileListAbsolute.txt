@@ -1,0 +1,11 @@
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\bin\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.deps.json
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\bin\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.runtimeconfig.json
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\bin\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.runtimeconfig.dev.json
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\bin\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.dll
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\bin\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.pdb
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.csprojAssemblyReference.cache
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.csproj.CoreCompileInputs.cache
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.AssemblyInfoInputs.cache
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.AssemblyInfo.cs
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.dll
+E:\UI OF PM\TemporaryDBappllication\TemporaryDBappllicationAPI\obj\Debug\netcoreapp2.1\TemporaryDBappllicationAPI.pdb

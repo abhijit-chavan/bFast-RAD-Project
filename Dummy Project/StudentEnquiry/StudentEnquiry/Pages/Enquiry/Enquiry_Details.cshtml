@@ -1,0 +1,40 @@
+@page
+@model StudentEnquiry.Pages.Enquiry_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Enquiry.EnquiryId"></label>:</td>
+                    <td class="editor-label">@Model.Enquiry.EnquiryId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Enquiry.CourseId"></label>:</td>
+                    <td class="editor-field"><label asp-for="Enquiry.CourseId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Enquiry.StudentName"></label>:</td>
+                    <td class="editor-label">@Model.Enquiry.StudentName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Enquiry.ContactNo"></label>:</td>
+                    <td class="editor-label">@Model.Enquiry.ContactNo</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Enquiry.Comments"></label>:</td>
+                    <td class="editor-label">@Model.Enquiry.Comments</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

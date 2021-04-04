@@ -1,0 +1,75 @@
+@using fifth_tempDBAPI.Domain;
+@model fifth_tempDB.PartialModels.AddEditWorkflowMasterPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="WorkflowMaster.WorkflowId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="WorkflowMaster.WorkflowId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.WorkflowName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.WorkflowName" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.WorkflowName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.LevelOfApprovalsHidden"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.LevelOfApprovalsHidden" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.LevelOfApprovalsHidden"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.CreatedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.CreatedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.CreatedBy"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.CreatedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.CreatedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.Updatedby"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.Updatedby" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.Updatedby"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="WorkflowMaster.Updatedon"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="WorkflowMaster.Updatedon" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="WorkflowMaster.Updatedon"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

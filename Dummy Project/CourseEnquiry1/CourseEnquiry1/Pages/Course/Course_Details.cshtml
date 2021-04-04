@@ -1,0 +1,40 @@
+@page
+@model CourseEnquiry1.Pages.Course_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Course.CourseId"></label>:</td>
+                    <td class="editor-label">@Model.Course.CourseId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Course.CourseName"></label>:</td>
+                    <td class="editor-label">@Model.Course.CourseName</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Course.StartDate"></label>:</td>
+                    <td class="editor-label">@Model.Course.StartDate</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Course.EndDate"></label>:</td>
+                    <td class="editor-label">@Model.Course.EndDate</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="Course.Fees"></label>:</td>
+                    <td class="editor-label">@Model.Course.Fees</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

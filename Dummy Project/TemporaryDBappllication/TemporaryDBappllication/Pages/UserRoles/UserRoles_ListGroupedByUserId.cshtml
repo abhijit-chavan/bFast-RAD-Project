@@ -1,0 +1,67 @@
+@page
+@model TemporaryDBappllication.Pages.UserRoles_ListGroupedByUserIdModel
+@{
+    ViewData["Title"] = "List of User Roles By User Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListGroupedByUserId?handler=GridDataGroupedByUserId',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status', ''],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'RoleId', index: 'RoleId', align: 'right' },
+                    { name: 'Status', index: 'Status', align: 'center', formatter: 'checkbox' },
+                    { name: 'CreatedBy', index: 'CreatedBy' }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles By User Master',
+                height: '100%',
+                width: '1200',
+                grouping: true,
+                groupingView: {
+                    groupField: ['CreatedBy'],
+                    groupColumnShow: [false],
+                    groupText: ['<b>{0} ({1} items)</b>'],
+                    groupDataSorted: true
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

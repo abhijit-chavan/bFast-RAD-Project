@@ -1,0 +1,230 @@
+@page
+@model CourseEnquiry1.Pages.Student_ListCrudModel
+@{
+    ViewData["Title"] = "List of Student";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "Student";
+        var urlAndMethod = "/Student/Student_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#studenId").attr('disabled', true);
+        }
+
+        function editItem(studenId, studentName, emailId, contactNumber, password) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(studenId);
+
+            $("#studenId").attr('disabled', false);
+            $("#studenId").val(studenId);
+            $("#studentName").val(studentName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#emailId").val(emailId.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#contactNumber").val(contactNumber);
+            $("#password").val(password.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#studenId").val('');
+            $("#studentName").val('');
+            $("#emailId").val('');
+            $("#contactNumber").val('');
+            $("#password").val('');
+        }
+
+        function getSerializedData() {
+            var studenId = $('#studenId').val();
+
+            if (studenId == '')
+                studenId = '-1';
+
+            var serializedData =
+                "'StudenId':'" + studenId + "'," +
+                "'StudentName':'" + $('#studentName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'EmailId':'" + $('#emailId').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'ContactNumber':'" + $('#contactNumber').val() + "'," +
+                "'Password':'" + $('#password').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var studentName = $('#studentName').val();
+            var emailId = $('#emailId').val();
+            var contactNumber = $('#contactNumber').val();
+            var password = $('#password').val();
+
+            // clear all validation messages
+            $('#studentNameValidation').text('');
+            $('#emailIdValidation').text('');
+            $('#contactNumberValidation').text('');
+            $('#passwordValidation').text('');
+
+            // validation
+            if (studentName == '') { isValid = false; $("#studentNameValidation").text('Student Name is required.'); }
+            if (studentName.length > 50) { isValid = false; $("#studentNameValidation").text('Student Name must be 50 characters or less.'); }
+            if (emailId == '') { isValid = false; $("#emailIdValidation").text('Email Id is required.'); }
+            if (emailId.length > 50) { isValid = false; $("#emailIdValidation").text('Email Id must be 50 characters or less.'); }
+            if (contactNumber == '') { isValid = false; $("#contactNumberValidation").text('Contact Number is required.'); }
+            if (contactNumber != '' && !isNumeric(contactNumber)) { isValid = false; $("#contactNumberValidation").text('Contact Number must be an integer.'); }
+            if (contactNumber != '' && isNumeric(contactNumber) && !isWithinInt32Range(contactNumber)) { isValid = false; $("#contactNumberValidation").text('Contact Number must be between -2147483648 and 2147483647.'); }
+            if (password == '') { isValid = false; $("#passwordValidation").text('Password is required.'); }
+            if (password.length > 50) { isValid = false; $("#passwordValidation").text('Password must be 50 characters or less.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/Student/Student_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Studen Id','Student Name','Email Id','Contact Number','Password', '', ''],
+                colModel: [
+                    { name: 'StudenId', index: 'StudenId', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'left' },
+                    { name: 'EmailId', index: 'EmailId', align: 'left' },
+                    { name: 'ContactNumber', index: 'ContactNumber', align: 'right', formatter: 'integer' },
+                    { name: 'Password', index: 'Password', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'StudenId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Student',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var studenId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StudenId');
+                        var studentName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StudentName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var emailId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'EmailId').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var contactNumber = jQuery("#list-grid").jqGrid('getCell', ids[i], 'ContactNumber');
+                        var password = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Password').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + studenId + "','" + studentName + "','" + emailId + "','" + contactNumber + "','" + password + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New Student">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="Student.StudenId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.StudenId" id="studenId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.StudentName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.StudentName" id="studentName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="studentNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.EmailId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.EmailId" id="emailId" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="emailIdValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.ContactNumber"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.ContactNumber" id="contactNumber" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="contactNumberValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.Password"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.Password" id="password" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="passwordValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Student" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New Student</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

@@ -1,0 +1,89 @@
+@page
+@model CourseEnquiry1.Pages.CourseEnrollment_ListCrudRedirectModel
+@{
+    ViewData["Title"] = "List of Course Enrollment";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listcrudredirect.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/CourseEnrollment/CourseEnrollment_ListCrudRedirect';
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/CourseEnrollment/CourseEnrollment_ListCrudRedirect?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enrollment Id','Course Name','Student Name','Comments', '', ''],
+                colModel: [
+                    { name: 'EnrollmentId', index: 'EnrollmentId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'right' },
+                    { name: 'StudentName', index: 'StudentName', align: 'right' },
+                    { name: 'Comments', index: 'Comments', align: 'left' },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false , formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false , formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnrollmentId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course Enrollment',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a href='/CourseEnrollment/CourseEnrollment_Update?id=" + currentid + "&returnUrl=/CourseEnrollment/CourseEnrollment_ListCrudRedirect'><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="/CourseEnrollment/CourseEnrollment_Add?returnUrl=/CourseEnrollment/CourseEnrollment_ListCrudRedirect"><img src="@Url.Content("~/images/Add.gif")" alt="Add New CourseEnrollment" style="border: none;" /></a>&nbsp;<a href="/CourseEnrollment/CourseEnrollment_Add?returnUrl=/CourseEnrollment/CourseEnrollment_ListCrudRedirect">Add New CourseEnrollment</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

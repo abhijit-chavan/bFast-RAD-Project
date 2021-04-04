@@ -1,0 +1,101 @@
+@page
+@model TemporaryDBappllication.Pages.UserRoles_ListMasterDetailSubGridByUserIdModel
+@{
+    ViewData["Title"] = "List of User Roles By User Master";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListMasterDetailSubGridByUserId?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Id','User Name','Password','Email','Created On','Created By','Modified On','Modified By'],
+                colModel: [
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'UserName', index: 'UserName', align: 'left' },
+                    { name: 'Password', index: 'Password', align: 'left' },
+                    { name: 'Email', index: 'Email', align: 'left' },
+                    { name: 'CreatedOn', index: 'CreatedOn', align: 'left', sorttype: "date" },
+                    { name: 'CreatedBy', index: 'CreatedBy', align: 'left' },
+                    { name: 'ModifiedOn', index: 'ModifiedOn', align: 'left', sorttype: "date" },
+                    { name: 'ModifiedBy', index: 'ModifiedBy', align: 'left' },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 5,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles By User Master',
+                height: '100%',
+                width: '1200',
+                multiselect: false,
+                subGrid: true,
+                subGridRowExpanded: SubGridDetail
+            });
+        });
+
+        function SubGridDetail(subgrid_id, row_id) {
+            var subgrid_table_id, pager_id;
+            subgrid_table_id = subgrid_id + '_t';
+            pager_id = 'p_' + subgrid_table_id;
+
+            $('#' + subgrid_id).html("<div style='padding: 20px;'><table id='" + subgrid_table_id + "'></table><div id='" + pager_id + "'></div></div>");
+
+            $('#' + subgrid_table_id).jqGrid({
+                url: "/UserRoles/UserRoles_ListMasterDetailSubGridByUserId?handler=GridDataWithFilters&filters={\"groupOp\":\"AND\",\"rules\":[{\"field\":\"UserId\",\"op\":\"eq\",\"data\":\"" + row_id + "\"}]}",
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status'],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'right' },
+                    { name: 'RoleId', index: 'RoleId', align: 'right' },
+                    { name: 'Status', index: 'Status', align: 'center', formatter: 'checkbox' },
+                ],
+                pager: pager_id,
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                height: '100%',
+                width: '1130'
+            });
+        }
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

@@ -1,0 +1,69 @@
+@using TemporaryDBappllicationAPI.Domain;
+@model TemporaryDBappllication.PartialModels.AddEditRoleMasterPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="RoleMaster.RoleId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="RoleMaster.RoleId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="RoleMaster.RoleDescription"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="RoleMaster.RoleDescription" /></td>
+                    <td class="editor-field"><span asp-validation-for="RoleMaster.RoleDescription"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="RoleMaster.CreatedOn"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="RoleMaster.CreatedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="RoleMaster.CreatedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="RoleMaster.CreatedBy"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="RoleMaster.CreatedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="RoleMaster.CreatedBy"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="RoleMaster.ModifiedOn"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="RoleMaster.ModifiedOn" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="RoleMaster.ModifiedOn"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="RoleMaster.ModifiedBy"></label>:</td>
+                    <td></td>
+                    <td class="editor-field"><input asp-for="RoleMaster.ModifiedBy" /></td>
+                    <td class="editor-field"><span asp-validation-for="RoleMaster.ModifiedBy"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

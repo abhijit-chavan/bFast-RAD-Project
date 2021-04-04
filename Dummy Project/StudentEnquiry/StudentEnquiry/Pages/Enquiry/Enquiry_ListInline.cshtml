@@ -1,0 +1,152 @@
+@page
+@model StudentEnquiry.Pages.Enquiry_ListInlineModel
+@using System.Text.RegularExpressions;
+@{
+    ViewData["Title"] = "List of Enquiry";
+
+    string enquiryIdSelectValues = ":";
+    string courseIdSelectValues = ":";
+
+    foreach (var item in Model.EnquiryDropDownListData.OrderBy(e1 => e1.EnquiryId))
+    {
+        enquiryIdSelectValues += ";" + item.EnquiryId + ":" + item.EnquiryId + " - " + Regex.Replace(item.StudentName is null ? "" : item.StudentName, "[^a-zA-Z0-9 -]", "");
+    }
+
+    foreach (var item in Model.CouseDropDownListData.OrderBy(c => c.Couseid))
+    {
+        courseIdSelectValues += ";" + item.Couseid + ":" + item.Couseid + " - " + Regex.Replace(item.CouseName is null ? "" : item.CouseName, "[^a-zA-Z0-9 -]", "");
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listinline.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var urlAndMethod = '/Enquiry/Enquiry_ListInline';
+        var errorMessage = '';
+
+        function getSerializedData(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+            var enquiryId = rowData.EnquiryId;
+
+            if (enquiryId == '')
+                enquiryId = '-1';
+
+            var serializedData =
+                "'EnquiryId':'" + enquiryId + "'," +
+                "'CourseId':'" + $('#' + currentId + '_CourseId').val() + "'," +
+                "'StudentName':'" + $('#' + currentId + '_StudentName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'ContactNo':'" + $('#' + currentId + '_ContactNo').val() + "'," +
+                "'Comments':'" + $('#' + currentId + '_Comments').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid(currentId) {
+            var rowData = $('#list-grid').jqGrid('getRowData', currentId);
+        
+            var courseId = $('#' + currentId + '_CourseId').val();
+            var studentName = $('#' + currentId + '_StudentName').val();
+            var contactNo = $('#' + currentId + '_ContactNo').val();
+            var comments = $('#' + currentId + '_Comments').val();
+
+            // validation
+            if (courseId == '') errorMessage += '- Course Id is required.<br/>';
+            if (studentName == '') errorMessage += '- Student Name is required.<br/>';
+            if (studentName.length > 50) errorMessage += '- Student Name must be 50 characters or less.<br/>';
+            if (contactNo == '') errorMessage += '- Contact No is required.<br/>';
+            if (contactNo != '' && !isNumeric(contactNo)) errorMessage += '- Contact No must be an integer.<br/>';
+            if (comments.length > 50) errorMessage += '- Comments must be 50 characters or less.<br/>';
+
+            if (errorMessage == '')
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            var enquiryIdSelectValues = "@enquiryIdSelectValues";
+            var courseIdSelectValues = "@courseIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/Enquiry/Enquiry_ListInline?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Enquiry Id','Course Id','Student Name','Contact No','Comments', '', ''],
+                colModel: [
+                    { name: 'EnquiryId', index: 'EnquiryId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: enquiryIdSelectValues } },
+                    { name: 'CourseId', index: 'CourseId', align: 'left', editable: true, formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: courseIdSelectValues } },
+                    { name: 'StudentName', index: 'StudentName', align: 'left', editable: true },
+                    { name: 'ContactNo', index: 'ContactNo', align: 'right', editable: true, formatter: 'integer' },
+                    { name: 'Comments', index: 'Comments', align: 'left', editable: true },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'EnquiryId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Enquiry',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        editLink = "<a id='editLink" + currentid + "' href='#' onclick=\"editRow('" + currentid + "', 'ListInlineUpdate');\"><img src='/images/Edit.gif' style='border:none;' /></a>" +
+                                "<a id='saveLink" + currentid + "' style='display:none;' href='#' onclick=\"saveRow('" + currentid + "');\"><img src='/images/Checked.gif' style='border:none;' /></a>";
+
+                        deleteLink = "<a href='#' id='deleteLink" + currentid + "' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>" +
+                            "<a id='cancelLink" + currentid + "' style='display:none;' href='#' onclick=\"cancelRow('" + currentid + "');\"><img src='/images/Unchecked.gif' style='border:none;' /></a>";
+
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { auditoperation: auditLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" id="addLink1" onclick="addRow('ListInlineAdd')"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Enquiry" style="border: none;" /></a>&nbsp;<a href="#" id="addLink2" onclick="addRow('ListInlineAdd')">Add New Enquiry</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

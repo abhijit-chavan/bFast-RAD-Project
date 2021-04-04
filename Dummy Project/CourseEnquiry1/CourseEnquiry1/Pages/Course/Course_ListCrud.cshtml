@@ -1,0 +1,230 @@
+@page
+@model CourseEnquiry1.Pages.Course_ListCrudModel
+@{
+    ViewData["Title"] = "List of Course";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/js/jqgrid-listcrud.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        var addEditTitle = "Course";
+        var urlAndMethod = "/Course/Course_ListCrud";
+
+        function addItem() {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(null);
+            $("#courseId").attr('disabled', true);
+        }
+
+        function editItem(courseId, courseName, startDate, endDate, fees) {
+            clearFields();
+            resetValidationErrors();
+            showHideItem(courseId);
+
+            $("#courseId").attr('disabled', false);
+            $("#courseId").val(courseId);
+            $("#courseName").val(courseName.replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n'));
+            $("#startDate").val(startDate);
+            $("#endDate").val(endDate);
+            $("#fees").val(fees);
+ 
+            return false;
+        }
+
+        function clearFields() {
+            $("#courseId").val('');
+            $("#courseName").val('');
+            $("#startDate").val('');
+            $("#endDate").val('');
+            $("#fees").val('');
+        }
+
+        function getSerializedData() {
+            var courseId = $('#courseId').val();
+
+            if (courseId == '')
+                courseId = '-1';
+
+            var serializedData =
+                "'CourseId':'" + courseId + "'," +
+                "'CourseName':'" + $('#courseName').val().replace(/~APOS/g, "'").replace(/~QUOT/g, '"').replace(/~NEWL/g, '\n').replace(/'/g, "\\'") + "'," +
+                "'StartDate':'" + $('#startDate').val() + "'," +
+                "'EndDate':'" + $('#endDate').val() + "'," +
+                "'Fees':'" + $('#fees').val() + "'";
+
+            return serializedData;
+        }
+
+        function isDataValid() {
+            var isValid = true;
+
+            // get item values that needs to be validated
+            var courseName = $('#courseName').val();
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            var fees = $('#fees').val();
+
+            // clear all validation messages
+            $('#courseNameValidation').text('');
+            $('#startDateValidation').text('');
+            $('#endDateValidation').text('');
+            $('#feesValidation').text('');
+
+            // validation
+            if (courseName == '') { isValid = false; $("#courseNameValidation").text('Course Name is required.'); }
+            if (courseName.length > 50) { isValid = false; $("#courseNameValidation").text('Course Name must be 50 characters or less.'); }
+            if (startDate == '') { isValid = false; $("#startDateValidation").text('Start Date is required.'); }
+            if (startDate != '' && !isDate(startDate)) { isValid = false; $("#startDateValidation").text('Start Date must be a valid date.'); }
+            if (endDate == '') { isValid = false; $("#endDateValidation").text('End Date is required.'); }
+            if (endDate != '' && !isDate(endDate)) { isValid = false; $("#endDateValidation").text('End Date must be a valid date.'); }
+            if (fees == '') { isValid = false; $("#feesValidation").text('Fees is required.'); }
+            if (fees != '' && !isDecimal(fees)) { isValid = false; $("#feesValidation").text('Fees must be a decimal.'); }
+            if (fees != '' && isDecimal(fees) && !isWithinMoneyRange(fees)) { isValid = false; $("#feesValidation").text('Fees must be a valid decimal.'); }
+
+            if (isValid)
+                return true;
+            else
+                return false;
+        }
+
+ 
+        function editFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        function deleteFormatter(cellvalue, options, rowObject) {
+            return cellvalue;
+        }
+ 
+        $(function () {
+            InitializeAddUpdateRecordDialog();
+            $('.datetextbox').datepicker({ dateFormat: "m/d/yy" });
+
+            $('#list-grid').jqGrid({
+                url: '/Course/Course_ListCrud?handler=GridData',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Course Id','Course Name','Start Date','End Date','Fees', '', ''],
+                colModel: [
+                    { name: 'CourseId', index: 'CourseId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'left' },
+                    { name: 'StartDate', index: 'StartDate', align: 'left', sorttype: "date" },
+                    { name: 'EndDate', index: 'EndDate', align: 'left', sorttype: "date" },
+                    { name: 'Fees', index: 'Fees', align: 'right', formatter: 'currency', formatoptions: { decimalPlaces: 2, prefix: "$"} },
+                    { name: 'editoperation', index: 'editoperation', align: 'center', width: 40, sortable: false, formatter: editFormatter },
+                    { name: 'deleteoperation', index: 'deleteoperation', align: 'center', width: 40, sortable: false, formatter: deleteFormatter },
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'CourseId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course',
+                height: '100%',
+                width: '1200',
+                gridComplete: function () {
+                    var ids = jQuery("#list-grid").jqGrid('getDataIDs');
+                    for (var i = 0; i < ids.length; i++) {
+                        var currentid = ids[i];
+                        var courseId = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseId');
+                        var courseName = jQuery("#list-grid").jqGrid('getCell', ids[i], 'CourseName').replace(/'/g, '~APOS').replace(/"/g, '~QUOT').replace(/\n/g, '~NEWL');
+                        var startDate = jQuery("#list-grid").jqGrid('getCell', ids[i], 'StartDate');
+                        var endDate = jQuery("#list-grid").jqGrid('getCell', ids[i], 'EndDate');
+                        var fees = jQuery("#list-grid").jqGrid('getCell', ids[i], 'Fees');
+
+                        editLink = "<a href='#' onclick=\"editItem('" + courseId + "','" + courseName + "','" + startDate + "','" + endDate + "','" + fees + "')\"><img src='/images/Edit.gif' style='border:none;' /></a>";
+                        deleteLink = "<a href='#' onclick=\"deleteItem('" + currentid + "')\"><img src='/images/Delete.png' style='border:none;' /></a>";
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { editoperation: editLink });
+                        jQuery("#list-grid").jqGrid('setRowData', ids[i], { deleteoperation: deleteLink });
+                    }
+                }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<div id="addUpdateRecordDialog" title="Add New Course">
+<form method="post">
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr id="trPrimaryKey">
+                    <td class="editor-label"><label asp-for="Course.CourseId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.CourseId" id="courseId" readonly="readonly" /></td>
+                    <td class="editor-field"></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.CourseName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.CourseName" id="courseName" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="courseNameValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.StartDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.StartDate" class="datetextbox" id="startDate" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="startDateValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.EndDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.EndDate" class="datetextbox" id="endDate" type="text" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="endDateValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.Fees"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.Fees" id="fees" onblur="isDataValid()" /></td>
+                    <td class="editor-field"><span id="feesValidation" style="color: red;"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        <input id="inputAdd" name="inputAdd" type="button" value="Add" class="button-150" onclick="saveNewItem()" />
+                        <input id="inputUpdate" name="inputUpdate" type="button" value="Update" class="button-150" onclick="updateCurrentItem()" />
+                        <input type="button" value="Cancel" onclick="closeDialog(); return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
+</div>
+
+<div id="errorConfirmationDialog"></div>
+<div id="errorDialog"></div>
+
+<a href="#" onclick="addItem()"><img src="@Url.Content("~/images/Add.gif")" alt="Add New Course" style="border: none;" /></a>&nbsp;<a href="#" onclick="addItem()">Add New Course</a>
+<br /><br />
+
+<table id="list-grid"></table>
+<div id="list-pager"></div>

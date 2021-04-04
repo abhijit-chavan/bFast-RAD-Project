@@ -1,0 +1,63 @@
+@using CourseEnquiryAPI.Domain;
+@model CourseEnquiry.PartialModels.AddEditCoursePartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="Course.CourseId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="Course.CourseId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.CourseName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.CourseName" /></td>
+                    <td class="editor-field"><span asp-validation-for="Course.CourseName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.StartDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.StartDate" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="Course.StartDate"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.EndDate"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.EndDate" class="datetextbox" type="text" /></td>
+                    <td class="editor-field"><span asp-validation-for="Course.EndDate"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Course.Fees"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Course.Fees" /></td>
+                    <td class="editor-field"><span asp-validation-for="Course.Fees"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>

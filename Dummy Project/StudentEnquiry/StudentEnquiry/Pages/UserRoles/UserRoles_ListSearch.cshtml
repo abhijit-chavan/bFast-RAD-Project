@@ -1,0 +1,102 @@
+@page
+@model StudentEnquiry.Pages.UserRoles_ListSearchModel
+@{
+    ViewData["Title"] = "List of User Roles";
+
+    string userIdSelectValues = ":";
+    string roleIdSelectValues = ":";
+
+    foreach (var item in Model.UserMasterDropDownListData.OrderBy(u => u.UserId))
+    {
+        userIdSelectValues += ";" + item.UserId + ":" + item.UserId;
+    }
+
+    foreach (var item in Model.RoleMasterDropDownListData.OrderBy(r => r.RoleId))
+    {
+        roleIdSelectValues += ";" + item.RoleId + ":" + item.RoleId;
+    }
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+            var userIdSelectValues = "@userIdSelectValues";
+            var roleIdSelectValues = "@roleIdSelectValues";
+
+            $('#list-grid').jqGrid({
+                url: '/UserRoles/UserRoles_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['User Role Id','User Id','Role Id','Status'],
+                colModel: [
+                    { name: 'UserRoleId', index: 'UserRoleId', align: 'right' },
+                    { name: 'UserId', index: 'UserId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: userIdSelectValues } },
+                    { name: 'RoleId', index: 'RoleId', align: 'left', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: roleIdSelectValues } },
+                    { name: 'Status', index: 'Status', align: 'center', formatter: 'select', stype: 'select', edittype: 'select', editoptions: { value: checkBoxSelectValues } }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'UserRoleId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of User Roles',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "UserRoleId" && !isNumeric(enteredValue)) {
+                        validationErrors += "  User Role Id must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

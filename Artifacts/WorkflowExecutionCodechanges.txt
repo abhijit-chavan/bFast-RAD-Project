@@ -1,0 +1,4 @@
+Workflow Screen:
+Added the document for reference
+1. UI modified with expected functionality in AutoCodeGenerator design code behind class
+2. Modifed the code as per the requirement in AutoCodeGenerator and WorkflowHelperClass classes

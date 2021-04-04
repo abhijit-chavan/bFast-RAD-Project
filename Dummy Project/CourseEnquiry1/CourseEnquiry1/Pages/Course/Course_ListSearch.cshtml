@@ -1,0 +1,100 @@
+@page
+@model CourseEnquiry1.Pages.Course_ListSearchModel
+@{
+    ViewData["Title"] = "List of Course";
+}
+
+@section AdditionalCss {
+    <link rel="stylesheet" href="~/css/ui.jqgrid.min.css" />
+}
+
+@section AdditionalJavaScript {
+    <script src="~/js/jqgrid-i18n/grid.locale-en.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-jqgrid-4.13.2.min.js" asp-append-version="true"></script>
+    <script src="~/js/jqgrid-listsearch.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.searchFilter.min.js" asp-append-version="true"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var checkBoxSelectValues = ":;True:<input type='checkbox' checked disabled /> True;False:<input type='checkbox' disabled /> False";
+
+            $('#list-grid').jqGrid({
+                url: '/Course/Course_ListSearch?handler=GridDataWithFilters',
+                datatype: 'json',
+                mtype: 'GET',
+                colNames: ['Course Id','Course Name','Start Date','End Date','Fees'],
+                colModel: [
+                    { name: 'CourseId', index: 'CourseId', align: 'right' },
+                    { name: 'CourseName', index: 'CourseName', align: 'left', searchoptions: { sopt: ['cn']} },
+                    { name: 'StartDate', index: 'StartDate', align: 'left', sorttype: "date" },
+                    { name: 'EndDate', index: 'EndDate', align: 'left', sorttype: "date" },
+                    { name: 'Fees', index: 'Fees', align: 'right', formatter: 'currency', formatoptions: { decimalPlaces: 2, prefix: "$"} }
+                ],
+                pager: $('#list-pager'),
+                rowNum: 10,
+                pageable: true,
+                autoencode: true,
+                jsonReader:
+                {
+                    page: "d.page"
+                },
+                rowList: [5, 10, 20, 50],
+                sortname: 'CourseId',
+                sortorder: "asc",
+                viewrecords: true,
+                caption: 'List of Course',
+                height: '100%',
+                width: '1200',
+                ignoreCase: true
+            }).jqGrid('navGrid', '#list-pager', { edit: false, add: false, del: false, search: false, refresh: false });
+
+            $('#list-grid').jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, beforeSearch: function () {
+                // verify entered data before searching
+                var postData = $('#list-grid').jqGrid('getGridParam', 'postData');
+                var searchData = $.parseJSON(postData.filters);
+                var isThereValidationErrors = false;
+                var validationErrors = "";
+
+                for (var iRule = 0; iRule < searchData.rules.length; iRule++) {
+                    var enteredValue = searchData.rules[iRule].data;
+
+                    if (searchData.rules[iRule].field == "CourseId" && !isNumeric(enteredValue)) {
+                        validationErrors += "  Course Id must be a valid number.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "StartDate" && !isDate(enteredValue)) {
+                        validationErrors += "  Start Date must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "EndDate" && !isDate(enteredValue)) {
+                        validationErrors += "  End Date must be a valid date.";
+                        isThereValidationErrors = true;
+                    }
+                    if (searchData.rules[iRule].field == "Fees" && !isDecimal(enteredValue)) {
+                        validationErrors += "  Fees must be a valid decimal number.";
+                        isThereValidationErrors = true;
+                    }
+                }
+
+                if(isThereValidationErrors)
+                    alert($.trim(validationErrors));
+
+                return isThereValidationErrors;
+            }
+            });
+        });
+
+        // rename the page parameter to _page because asp.net core razor's page model
+        // does not recognize the page parameter when passed
+        $.extend(jQuery.jgrid.defaults, {
+            prmNames: {
+                page: "_page"
+            }
+        });
+    </script> 
+}
+
+<h2>@ViewData["Title"]</h2>
+<br /><br />
+<table id="list-grid"></table>
+<div id="list-pager"></div>

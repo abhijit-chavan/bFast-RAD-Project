@@ -1,0 +1,358 @@
+@page
+@model TemporaryDBappllication.Pages.Index
+@{
+    ViewData["Title"] = "Generated ASP.NET Core Code";
+}
+
+<br/><br/>
+<b>Thank You for using KPIT K Foundation. KPIT K Foundation generated 2 applications/projects for use with Visual Studio 2017 or later.
+  Some of the main objects generated are listed below in their respective projects including: Pages, Page Models, Partial Pages, Partial Page Models, Business Objects, Data Layer, Entity Framework classes, and Models.</b><br/><br/>
+<div style="background-color: black; color: white; padding: 14px; font-weight: bold;">
+    1.  Web Application Project - ASP.NET Core Razor Web Application (.NET Core)
+</div>
+<br/>
+<div id="divViewsFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">PAGES - Pages Folder (click to hide list)</div>
+<div id="divViewsFolderToToggle">
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH ADD, EDIT REDIRECT, & DELETE PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListCrudRedirect">RoleMaster/RoleMaster_ListCrudRedirect</a><br/>
+    <a href="~/UserMaster/UserMaster_ListCrudRedirect">UserMaster/UserMaster_ListCrudRedirect</a><br/>
+    <a href="~/UserRoles/UserRoles_ListCrudRedirect">UserRoles/UserRoles_ListCrudRedirect</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListCrudRedirect">WorkflowMaster/WorkflowMaster_ListCrudRedirect</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect">WorkflowStepsMaster/WorkflowStepsMaster_ListCrudRedirect</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">ADD NEW RECORD PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_Add?returnUrl=/Index">RoleMaster/RoleMaster_Add</a><br/>
+    <a href="~/UserMaster/UserMaster_Add?returnUrl=/Index">UserMaster/UserMaster_Add</a><br/>
+    <a href="~/UserRoles/UserRoles_Add?returnUrl=/Index">UserRoles/UserRoles_Add</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_Add?returnUrl=/Index">WorkflowMaster/WorkflowMaster_Add</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_Add?returnUrl=/Index">WorkflowStepsMaster/WorkflowStepsMaster_Add</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">UPDATE RECORD PAGES</div>
+    Pages\RoleMaster\RoleMaster_Update<br/>
+    Pages\UserMaster\UserMaster_Update<br/>
+    Pages\UserRoles\UserRoles_Update<br/>
+    Pages\WorkflowMaster\WorkflowMaster_Update<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_Update<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">RECORD DETAILS (READ-ONLY) PAGES</div>
+    Pages\RoleMaster\RoleMaster_Details<br/>
+    Pages\UserMaster\UserMaster_Details<br/>
+    Pages\UserRoles\UserRoles_Details<br/>
+    Pages\WorkflowMaster\WorkflowMaster_Details<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_Details<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST (READ-ONLY) PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListReadOnly">RoleMaster/RoleMaster_ListReadOnly</a><br/>
+    <a href="~/UserMaster/UserMaster_ListReadOnly">UserMaster/UserMaster_ListReadOnly</a><br/>
+    <a href="~/UserRoles/UserRoles_ListReadOnly">UserRoles/UserRoles_ListReadOnly</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListReadOnly">WorkflowMaster/WorkflowMaster_ListReadOnly</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListReadOnly">WorkflowStepsMaster/WorkflowStepsMaster_ListReadOnly</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH ADD, EDIT, & DELETE (SAME PAGE) PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListCrud">RoleMaster/RoleMaster_ListCrud</a><br/>
+    <a href="~/UserMaster/UserMaster_ListCrud">UserMaster/UserMaster_ListCrud</a><br/>
+    <a href="~/UserRoles/UserRoles_ListCrud">UserRoles/UserRoles_ListCrud</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListCrud">WorkflowMaster/WorkflowMaster_ListCrud</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListCrud">WorkflowStepsMaster/WorkflowStepsMaster_ListCrud</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH GROUPING PAGES</div>
+    <a href="~/UserRoles/UserRoles_ListGroupedByUserId">UserRoles/UserRoles_ListGroupedByUserId</a><br/>
+    <a href="~/UserRoles/UserRoles_ListGroupedByRoleId">UserRoles/UserRoles_ListGroupedByRoleId</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListGroupedByWorKflowId">WorkflowStepsMaster/WorkflowStepsMaster_ListGroupedByWorKflowId</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH TOTALS PAGES</div>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH TOTALS AND GROUPING PAGES</div>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH SEARCH PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListSearch">RoleMaster/RoleMaster_ListSearch</a><br/>
+    <a href="~/UserMaster/UserMaster_ListSearch">UserMaster/UserMaster_ListSearch</a><br/>
+    <a href="~/UserRoles/UserRoles_ListSearch">UserRoles/UserRoles_ListSearch</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListSearch">WorkflowMaster/WorkflowMaster_ListSearch</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListSearch">WorkflowStepsMaster/WorkflowStepsMaster_ListSearch</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST SCROLL-LOAD DATA PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListScrollLoad">RoleMaster/RoleMaster_ListScrollLoad</a><br/>
+    <a href="~/UserMaster/UserMaster_ListScrollLoad">UserMaster/UserMaster_ListScrollLoad</a><br/>
+    <a href="~/UserRoles/UserRoles_ListScrollLoad">UserRoles/UserRoles_ListScrollLoad</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListScrollLoad">WorkflowMaster/WorkflowMaster_ListScrollLoad</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListScrollLoad">WorkflowStepsMaster/WorkflowStepsMaster_ListScrollLoad</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH INLINE ADD & EDIT PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListInline">RoleMaster/RoleMaster_ListInline</a><br/>
+    <a href="~/UserMaster/UserMaster_ListInline">UserMaster/UserMaster_ListInline</a><br/>
+    <a href="~/UserRoles/UserRoles_ListInline">UserRoles/UserRoles_ListInline</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListInline">WorkflowMaster/WorkflowMaster_ListInline</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListInline">WorkflowStepsMaster/WorkflowStepsMaster_ListInline</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MANUAL FOREACH PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_ListForeach">RoleMaster/RoleMaster_ListForeach</a><br/>
+    <a href="~/UserMaster/UserMaster_ListForeach">UserMaster/UserMaster_ListForeach</a><br/>
+    <a href="~/UserRoles/UserRoles_ListForeach">UserRoles/UserRoles_ListForeach</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_ListForeach">WorkflowMaster/WorkflowMaster_ListForeach</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListForeach">WorkflowStepsMaster/WorkflowStepsMaster_ListForeach</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MASTER DETAIL GRID PAGES</div>
+    <a href="~/UserRoles/UserRoles_ListMasterDetailGridByUserId">UserRoles/UserRoles_ListMasterDetailGridByUserId</a><br/>
+    <a href="~/UserRoles/UserRoles_ListMasterDetailGridByRoleId">UserRoles/UserRoles_ListMasterDetailGridByRoleId</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailGridByWorKflowId">WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailGridByWorKflowId</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MASTER DETAIL SUB GRID PAGES</div>
+    <a href="~/UserRoles/UserRoles_ListMasterDetailSubGridByUserId">UserRoles/UserRoles_ListMasterDetailSubGridByUserId</a><br/>
+    <a href="~/UserRoles/UserRoles_ListMasterDetailSubGridByRoleId">UserRoles/UserRoles_ListMasterDetailSubGridByRoleId</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowId">WorkflowStepsMaster/WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowId</a><br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">UNBOUND PAGES</div>
+    <a href="~/RoleMaster/RoleMaster_Unbound">RoleMaster/RoleMaster_Unbound</a><br/>
+    <a href="~/UserMaster/UserMaster_Unbound">UserMaster/UserMaster_Unbound</a><br/>
+    <a href="~/UserRoles/UserRoles_Unbound">UserRoles/UserRoles_Unbound</a><br/>
+    <a href="~/WorkflowMaster/WorkflowMaster_Unbound">WorkflowMaster/WorkflowMaster_Unbound</a><br/>
+    <a href="~/WorkflowStepsMaster/WorkflowStepsMaster_Unbound">WorkflowStepsMaster/WorkflowStepsMaster_Unbound</a><br/>
+    <br/>
+    _AddEditRoleMasterPartial.cshtml<br/>
+    _AddEditUserMasterPartial.cshtml<br/>
+    _AddEditUserRolesPartial.cshtml<br/>
+    _AddEditWorkflowMasterPartial.cshtml<br/>
+    _AddEditWorkflowStepsMasterPartial.cshtml<br/>
+</div>
+<br/>
+<div id="divPageModelsFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">PAGE MODELS - Pages Folder (click to show list)</div>
+<div id="divPageModelsFolderToToggle">
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH ADD, EDIT REDIRECT, & DELETE PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ ListCrudRedirect.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ ListCrudRedirect.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ ListCrudRedirect.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ ListCrudRedirect.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ ListCrudRedirect.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">ADD NEW RECORD PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_Add.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_Add.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_Add.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_Add.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_Add.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">UPDATE RECORD PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ Update<br/>
+    Pages\UserMaster\UserMaster_ Update<br/>
+    Pages\UserRoles\UserRoles_ Update<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ Update<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ Update<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">RECORD DETAILS (READ-ONLY) PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ Details<br/>
+    Pages\UserMaster\UserMaster_ Details<br/>
+    Pages\UserRoles\UserRoles_ Details<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ Details<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ Details<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST (READ-ONLY) PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListReadOnly.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListReadOnly.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListReadOnly.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListReadOnly.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListReadOnly.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH ADD, EDIT, & DELETE (SAME PAGE) PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListCrud.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListCrud.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListCrud.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListCrud.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListCrud.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH GROUPING PAGE MODELS</div>
+    Pages\UserRoles\UserRoles_ListGroupedByUserId.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListGroupedByRoleId.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListGroupedByWorKflowId.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH TOTALS PAGE MODELS</div>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH TOTALS AND GROUPING PAGE MODELS</div>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH SEARCH PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListSearch.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListSearch.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListSearch.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListSearch.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListSearch.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST SCROLL-LOAD DATA PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListScrollLoad.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListScrollLoad.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListScrollLoad.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListScrollLoad.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListScrollLoad.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH INLINE ADD & EDIT PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListInline.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListInline.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListInline.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListInline.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListInline.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MANUAL FOREACH PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_ListForeach.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_ListForeach.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListForeach.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_ListForeach.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListForeach.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MASTER DETAIL GRID PAGE MODELS</div>
+    Pages\UserRoles\UserRoles_ListMasterDetailGridByUserId.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListMasterDetailGridByRoleId.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListMasterDetailGridByWorKflowId.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">LIST WITH MASTER DETAIL SUB GRID PAGE MODELS</div>
+    Pages\UserRoles\UserRoles_ListMasterDetailSubGridByUserId.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_ListMasterDetailSubGridByRoleId.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_ListMasterDetailSubGridByWorKflowId.cshtml.cs<br/>
+    <div style="font-weight: bolder; color: navy; padding: 24px 0px 12px 0px;">UNBOUND PAGE MODELS</div>
+    Pages\RoleMaster\RoleMaster_Unbound.cshtml.cs<br/>
+    Pages\UserMaster\UserMaster_Unbound.cshtml.cs<br/>
+    Pages\UserRoles\UserRoles_Unbound.cshtml.cs<br/>
+    Pages\WorkflowMaster\WorkflowMaster_Unbound.cshtml.cs<br/>
+    Pages\WorkflowStepsMaster\WorkflowStepsMaster_Unbound.cshtml.cs<br/>
+</div>
+<br/>
+<div id="divPartialPagesFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">PARTIAL PAGES - Pages\Shared Folder (click to show list)</div>
+<div id="divPartialPagesFolderToToggle">
+    <br/>
+    _AddEditRoleMasterPartial.cshtml<br/>
+    _AddEditUserMasterPartial.cshtml<br/>
+    _AddEditUserRolesPartial.cshtml<br/>
+    _AddEditWorkflowMasterPartial.cshtml<br/>
+    _AddEditWorkflowStepsMasterPartial.cshtml<br/>
+</div>
+<br/>
+<div id="divPartialPageModelsFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">PARTIAL PAGE MODELS - PartialModels Folder (click to show list)</div>
+<div id="divPartialPageModelsFolderToToggle">
+    <br/>
+    AddEditRoleMasterPartialModel.cs<br/>
+    AddEditUserMasterPartialModel.cs<br/>
+    AddEditUserRolesPartialModel.cs<br/>
+    AddEditWorkflowMasterPartialModel.cs<br/>
+    AddEditWorkflowStepsMasterPartialModel.cs<br/>
+</div>
+<br/>
+<br/><br/>
+<div style="background-color: black; color: white; padding: 14px; font-weight: bold;">
+    2.  Business Objects/Data Layer - Class Library Project (.NET Core)
+</div>
+<br/>
+<div id="divBusinessObjects" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">BUSINESS OBJECTS/MIDDLE TIER - BusinessObject Folder (click to show list)</div>
+<div id="divBusinessObjectsToToggle">
+    <br/>
+    RoleMaster.cs<br/>
+    UserMaster.cs<br/>
+    UserRoles.cs<br/>
+    WorkflowMaster.cs<br/>
+    WorkflowStepsMaster.cs<br/>
+    <br/><br/>
+    <div style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">BUSINESS OBJECTS (Base Class) - BusinessObject\Base Folder</div>
+    <br/>
+    RoleMasterBase.cs<br/>
+    UserMasterBase.cs<br/>
+    UserRolesBase.cs<br/>
+    WorkflowMasterBase.cs<br/>
+    WorkflowStepsMasterBase.cs<br/>
+    <br/><br/>
+</div>
+<br/>
+<div id="divDataLayer" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">DATA LAYER/DAL/DATA TIER - DataLayer Folder (click to show list)</div>
+<div id="divDataLayerToToggle">
+    <br/>
+    RoleMasterDataLayer.cs<br/>
+    UserMasterDataLayer.cs<br/>
+    UserRolesDataLayer.cs<br/>
+    WorkflowMasterDataLayer.cs<br/>
+    WorkflowStepsMasterDataLayer.cs<br/>
+    <br/><br/>
+    <div style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">DATA LAYER (Base Class) - DataLayer\Base Folder</div>
+    <br/>
+    RoleMasterDataLayerBase.cs<br/>
+    UserMasterDataLayerBase.cs<br/>
+    UserRolesDataLayerBase.cs<br/>
+    WorkflowMasterDataLayerBase.cs<br/>
+    WorkflowStepsMasterDataLayerBase.cs<br/>
+    <br/><br/>
+</div>
+<br/>
+<div id="divModelsFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">MODELS - Models Folder (click to show list)</div>
+<div id="divModelsFolderToToggle">
+    <br/>
+    RoleMasterModel.cs<br/>
+    UserMasterModel.cs<br/>
+    UserRolesModel.cs<br/>
+    WorkflowMasterModel.cs<br/>
+    WorkflowStepsMasterModel.cs<br/>
+    <br/><br/>
+    <div style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">MODELS (Base Class) - Models\Base Folder</div>
+    <br/>
+    RoleMasterModelBase.cs<br/>
+    UserMasterModelBase.cs<br/>
+    UserRolesModelBase.cs<br/>
+    WorkflowMasterModelBase.cs<br/>
+    WorkflowStepsMasterModelBase.cs<br/>
+    <br/><br/>
+</div>
+<br/>
+<div id="divEfFolder" style="color: White; background-color: #507CD1; font-weight: bold; font-size: 12px; padding: 8px;">ENTITY FRAMEWORK - EF Folder (click to show list)</div>
+<div id="divEfFolderToToggle">
+    <br/>
+    first_tempDBContext.cs<br/><br/>
+    RoleMaster.cs<br/>
+    UserMaster.cs<br/>
+    UserRoles.cs<br/>
+    WorkflowMaster.cs<br/>
+    WorkflowStepsMaster.cs<br/>
+</div>
+<br/>
+<br/><br/>
+
+<script src="~/js/jquery-1.12.2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#divPageModelsFolderToToggle").hide();
+        $("#divBusinessObjectsToToggle").hide();
+        $("#divDataLayerToToggle").hide();
+        $("#divPartialPagesFolderToToggle").hide();
+        $("#divPartialPageModelsFolderToToggle").hide();
+        $("#divModelsFolderToToggle").hide();
+            $("#divEfFolderToToggle").hide();
+        $("#divViewsFolder").click(function () {
+            $("#divViewsFolderToToggle").toggle();
+
+            if ($("#divViewsFolder").text() == 'PAGES - Pages Folder (click to hide list)')
+                $("#divViewsFolder").text('PAGES - Pages Folder (click to show list)');
+            else
+                $("#divViewsFolder").text('PAGES - Pages Folder (click to hide list)');
+        });
+        $("#divPageModelsFolder").click(function () {
+            $("#divPageModelsFolderToToggle").toggle();
+
+            if ($("#divPageModelsFolder").text() == 'PAGE MODELS - Pages Folder (click to hide list)')
+                $("#divPageModelsFolder").text('PAGE MODELS - Pages Folder (click to show list)');
+            else
+                $("#divPageModelsFolder").text('PAGE MODELS - Pages Folder (click to hide list)');
+        });
+        $("#divPartialPagesFolder").click(function () {
+            $("#divPartialPagesFolderToToggle").toggle();
+
+            if ($("#divPartialPagesFolder").text() == 'PARTIAL PAGES - Pages\Shared Folder (click to hide list)')
+                $("#divPartialPagesFolder").text('PARTIAL PAGES - Pages\Shared Folder (click to show list)');
+            else
+                $("#divPartialPagesFolder").text('PARTIAL PAGES - Pages\Shared Folder (click to hide list)');
+        });
+        $("#divPartialPageModelsFolder").click(function () {
+            $("#divPartialPageModelsFolderToToggle").toggle();
+
+            if ($("#divPartialPageModelsFolder").text() == 'PARTIAL PAGE MODELS - PartialModels Folder (click to hide list)')
+                $("#divPartialPageModelsFolder").text('PARTIAL PAGE MODELS - PartialModels Folder (click to show list)');
+            else
+                $("#divPartialPageModelsFolder").text('PARTIAL PAGE MODELS - PartialModels Folder (click to hide list)');
+        });
+        $("#divBusinessObjects").click(function () {
+            $("#divBusinessObjectsToToggle").toggle();
+
+            if ($("#divBusinessObjects").text() == 'BUSINESS OBJECTS/MIDDLE TIER - BusinessObject Folder (click to hide list)')
+                $("#divBusinessObjects").text('BUSINESS OBJECTS/MIDDLE TIER - BusinessObject Folder (click to show list)');
+            else
+                $("#divBusinessObjects").text('BUSINESS OBJECTS/MIDDLE TIER - BusinessObject Folder (click to hide list)');
+        });
+        $("#divDataLayer").click(function () {
+            $("#divDataLayerToToggle").toggle();
+
+            if ($("#divDataLayer").text() == 'DATA LAYER/DAL/DATA TIER - DataLayer Folder (click to hide list)')
+                $("#divDataLayer").text('DATA LAYER/DAL/DATA TIER - DataLayer Folder (click to show list)');
+            else
+                $("#divDataLayer").text('DATA LAYER/DAL/DATA TIER - DataLayer Folder (click to hide list)');
+        });
+        $("#divModelsFolder").click(function () {
+            $("#divModelsFolderToToggle").toggle();
+
+            if ($("#divModelsFolder").text() == 'MODELS - Models Folder (click to hide list)')
+                $("#divModelsFolder").text('MODELS - Models Folder (click to show list)');
+            else
+                $("#divModelsFolder").text('MODELS - Models Folder (click to hide list)');
+        });
+        $("#divEfFolder").click(function () {
+            $("#divEfFolderToToggle").toggle();
+
+            if ($("#divEfFolder").text() == 'ENTITY FRAMEWORK - EF Folder (click to hide list)')
+                $("#divEfFolder").text('ENTITY FRAMEWORK - EF Folder (click to show list)');
+            else
+                $("#divEfFolder").text('ENTITY FRAMEWORK - EF Folder (click to hide list)');
+        });
+    });
+</script>

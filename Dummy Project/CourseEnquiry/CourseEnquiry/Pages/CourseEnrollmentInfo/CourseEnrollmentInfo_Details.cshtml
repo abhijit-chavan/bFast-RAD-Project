@@ -1,0 +1,36 @@
+@page
+@model CourseEnquiry.Pages.CourseEnrollmentInfo_DetailsModel
+
+<h2>Record Details</h2>
+<div>
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="CourseEnrollmentInfo.EnrollmentId"></label>:</td>
+                    <td class="editor-label">@Model.CourseEnrollmentInfo.EnrollmentId</td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="CourseEnrollmentInfo.CourseId"></label>:</td>
+                    <td class="editor-field"><label asp-for="CourseEnrollmentInfo.CourseId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="CourseEnrollmentInfo.StudentId"></label>:</td>
+                    <td class="editor-field"><label asp-for="CourseEnrollmentInfo.StudentId"></label></td>
+                </tr>
+                <tr>
+                    <td class="editor-label-bold"><label asp-for="CourseEnrollmentInfo.Comments"></label>:</td>
+                    <td class="editor-label">@Model.CourseEnrollmentInfo.Comments</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+
+                    <a href="@Model.ReturnUrl">Return</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</div>

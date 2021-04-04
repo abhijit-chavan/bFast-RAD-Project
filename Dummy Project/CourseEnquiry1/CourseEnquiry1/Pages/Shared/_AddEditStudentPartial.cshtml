@@ -1,0 +1,63 @@
+@using CourseEnquiry1API.Domain;
+@model CourseEnquiry1.PartialModels.AddEditStudentPartialModel
+
+<form method="post">
+<input type="hidden" asp-for="ReturnUrl" />
+    <div>
+        <fieldset>
+            <legend></legend>
+            <table>
+                @if (Model.Operation == CrudOperation.Update)
+                {
+                    <tr>
+                        <td class="editor-label"><label asp-for="Student.StudenId"></label>:</td>
+                        <td></td>
+                        <td class="editor-field"><input asp-for="Student.StudenId" readonly="readonly" /></td>
+                        <td></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.StudentName"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.StudentName" /></td>
+                    <td class="editor-field"><span asp-validation-for="Student.StudentName"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.EmailId"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.EmailId" /></td>
+                    <td class="editor-field"><span asp-validation-for="Student.EmailId"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.ContactNumber"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.ContactNumber" /></td>
+                    <td class="editor-field"><span asp-validation-for="Student.ContactNumber"></span></td>
+                </tr>
+                <tr>
+                    <td class="editor-label"><label asp-for="Student.Password"></label>:</td>
+                    <td><span style="color: red;">*</span></td>
+                    <td class="editor-field"><input asp-for="Student.Password" /></td>
+                    <td class="editor-field"><span asp-validation-for="Student.Password"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">
+                        <br />
+                        @if (Model.Operation == CrudOperation.Add)
+                        {
+                            <input type="submit" asp-page-handler="Add" value="Add" class="button-150" />
+                        }
+                        else
+                        {
+                            <input type="submit" asp-page-handler="Update" value="Update" class="button-150" />
+                        }
+
+                        <input type="button" value="Cancel" onclick="window.location='@Model.ReturnUrl'; return false;" class="button-100" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+</form>
